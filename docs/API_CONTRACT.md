@@ -90,7 +90,7 @@ Notes:
 
 viewer_has_* only meaningful when viewer is authenticated.
 
-For MVP, counts can be computed by query (or returned as 0 until wired).
+For core features, counts can be computed by query (or returned as 0 until wired).
 
 Endpoints
 1) Health
@@ -158,7 +158,7 @@ Request body:
   "source": "user (default)",
   "external_id": "string (optional for imported events)"
 }
-Validation (MVP):
+Validation:
 
 title length 1–120
 
@@ -182,7 +182,7 @@ Response 409:
   "existing_event_id": "uuid"
 }
 DELETE /api/events/:id (Authenticated, creator only)
-Purpose: delete an event you created (optional for MVP).
+Purpose: delete an event you created.
 
 Response 204
 

@@ -1,4 +1,4 @@
-This document defines the MVP database schema for p-ull up.
+This document defines the database schema for p-ull up.
 
 **Core requirements from proposal**
 - User management: Supabase Auth
@@ -18,7 +18,7 @@ We create our own `public.profiles` table to store app-facing user info.
 
 ---
 
-# Tables (MVP)
+# Tables
 
 ## 1) public.profiles
 Stores public user profile data linked to auth.
@@ -109,7 +109,7 @@ Index:
 
 ---
 
-## 6) Messaging (optional)
+## 6) Messaging
 Only define after core is stable.
 
 Likely tables:
@@ -132,7 +132,7 @@ We will enable RLS and add policies.
 - UPDATE: allow only creator (optional)
 
 ## public.event_saves / public.event_joins
-Privacy-friendly MVP:
+Privacy-friendly:
 - SELECT: allow only owner rows (`user_id = auth.uid()`)
 - INSERT: allow only authenticated user inserting their own row
 - DELETE: allow only owner deleting their own row
@@ -150,7 +150,7 @@ Counts:
 
 ---
 
-# Proximity Matching (MVP approach)
+# Proximity Matching
 For MVP we store `lat` and `lng` as floats and do one of:
 1) simple bounding-box filter in SQL, then refine in app, or
 2) Postgres extensions (later): PostGIS / earthdistance for true radius queries
