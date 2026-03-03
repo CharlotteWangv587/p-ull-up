@@ -1,7 +1,16 @@
 /**
  * Login route styles. CSS Module (login.module.css) so class names are scoped
- * and don't clash with home's page.module.css. Used by loginpage.tsx at app root.
+ * and don't clash with other pages. Used by loginpage.tsx at app root.
  */
+
+/* Shared brand color variables (match dashboard.module.css) */
+:root {
+  --gradient-start: #da22ff;
+  --gradient-end: #9733ee;
+  --text-dark: #333333;
+  --text-light: #ffffff;
+  --bg-light: #f4f4f9;
+}
 
 /* Full-page gradient background and centering for the card */
 .wrapper {
@@ -12,7 +21,7 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: linear-gradient(180deg, #e91e8c 0%, #6b21a8 50%, #4c1d95 100%);
+  background: linear-gradient(180deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
 }
 
 /* White card containing the form */
@@ -29,7 +38,7 @@
 .title {
   font-size: 24px;
   font-weight: 700;
-  color: #6b21a8;
+  color: var(--gradient-end);
   text-align: center;
   margin-bottom: 28px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -78,7 +87,7 @@
 
 .input:focus {
   outline: none;
-  border-color: #a855f7;
+  border-color: var(--gradient-end);
   background: #fff;
 }
 
@@ -94,7 +103,7 @@
   height: 48px;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%);
+  background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
   color: #fff;
   font-size: 13px;
   font-weight: 600;
