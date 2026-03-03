@@ -1,0 +1,163 @@
+/**
+ * Login route styles. CSS Module (login.module.css) so class names are scoped
+ * and don't clash with home's page.module.css. Used by loginpage.tsx at app root.
+ */
+
+/* Full-page gradient background and centering for the card */
+.wrapper {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(180deg, #e91e8c 0%, #6b21a8 50%, #4c1d95 100%);
+}
+
+/* White card containing the form */
+.card {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  padding: 40px 32px;
+}
+
+/* Card heading */
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #6b21a8;
+  text-align: center;
+  margin-bottom: 28px;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Form layout */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Wrapper for each field so we can position the icon inside the input */
+.inputGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Icon inside input (left side); shared by Person, Envelope, Lock SVGs */
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  width: 20px;
+  height: 20px;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px 0 44px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #f9fafb;
+  font-size: 15px;
+  color: #111827;
+  font-family: inherit;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.input::placeholder {
+  color: #9ca3af;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #a855f7;
+  background: #fff;
+}
+
+/* SIGN UP (primary) and SIGN IN (secondary) side by side */
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btnPrimary {
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #ec4899 0%, #8b5cf6 100%);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btnPrimary:hover {
+  opacity: 0.95;
+}
+
+.btnPrimary:active {
+  transform: scale(0.98);
+}
+
+.btnSecondary {
+  flex: 1;
+  height: 48px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btnSecondary:hover {
+  background: #f9fafb;
+  color: #4b5563;
+}
+
+/* "Back to home" link on the gradient, outside the card */
+.backLink {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: #fff;
+}
+
+/* Stack buttons on small screens */
+@media (max-width: 480px) {
+  .card {
+    padding: 32px 24px;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+}
