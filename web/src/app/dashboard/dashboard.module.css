@@ -1,0 +1,263 @@
+/* dashboard.module.css */
+
+/* SECTION: GLOBAL VARIABLES
+  We define these at the top so we can change the 'p-ull up' brand colors 
+  in one place and have them update everywhere instantly.
+*/
+:root {
+  --gradient-start: #da22ff; /* Bright Magenta from your teammate's login button */
+  --gradient-end: #9733ee;   /* Deep Purple from the login background */
+  --text-dark: #333333;      /* Standard dark grey for readability */
+  --text-light: #ffffff;     /* Pure white for text on dark backgrounds */
+  --bg-light: #f4f4f9;       /* Soft off-white background to make cards pop */
+}
+
+/* SECTION: BASE LAYOUT
+  Sets the default font and background for the entire dashboard.
+*/
+.container {
+  font-family: 'Inter', sans-serif; /* Modern, clean font choice */
+  background-color: var(--bg-light);
+  min-height: 100vh; /* Ensures the background covers the full screen height */
+  color: var(--text-dark);
+}
+
+/* SECTION 1: NAVIGATION BAR
+  The top bar containing the Logo, Search, and Auth buttons.
+*/
+.navbar {
+  display: flex; /* Aligns all items in a horizontal row */
+  justify-content: space-between; /* Pushes Logo+Search to left and Auth to right */
+  align-items: center; /* Vertically centers everything in the bar */
+  padding: 10px 40px;
+  background: white;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow for a 'floating' effect */
+}
+
+/* NAV LEFT: Keeps Logo and Search snug together on the left side */
+.navLeft {
+  display: flex;
+  align-items: center;
+  gap: 30px; /* Space specifically between Logo and Search Bar */
+  flex-grow: 1; /* Allows this group to take up the left/middle space */
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: var(--gradient-end); /* Uses our brand purple */
+  flex-shrink: 0; /* Prevents the logo from getting squashed */
+}
+
+/* SECTION 1.1: ADVANCED SEARCH (Meetup Style)
+  This handles the dual 'What' and 'Where' search layout.
+*/
+.searchContainer {
+  width: 100%;
+  max-width: 500px; /* Limits width to keep it close to the logo */
+}
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #e6e6e6;
+  border-radius: 40px; /* Creates the 'Pill' shape from your sketch */
+  padding: 4px 4px 4px 16px;
+  transition: all 0.2s ease;
+}
+
+/* Interactivity: Adds a brand-colored glow when the user hovers */
+.searchWrapper:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-color: var(--gradient-end);
+}
+
+.searchSection {
+  flex: 1; /* Ensures 'Keyword' and 'Location' inputs take up equal width */
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 8px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+/* The vertical line separating 'Search' and 'Location' */
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: #e6e6e6;
+  margin: 0 8px;
+}
+
+.searchIconBtn {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* SECTION 1.2: AUTH BUTTONS
+  Login and Sign Up buttons on the far right.
+*/
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.navLink {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.signUpBtn {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: white;
+  padding: 10px 22px;
+  border-radius: 25px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* SECTION 2: HERO AREA
+  The large welcome section with the wavy bottom.
+*/
+.hero {
+  background: linear-gradient(135deg, var(--gradient-end) 0%, var(--gradient-start) 100%);
+  color: white;
+  text-align: center;
+  padding: 100px 20px;
+  border-bottom-left-radius: 50% 20px;
+  border-bottom-right-radius: 50% 20px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.tagline {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  padding: 15px 15px;
+  font-weight: 300;
+  font-weight: bold;
+
+}
+
+/* SECTION 3: EVENTS FEED
+  The grid of upcoming event cards.
+*/
+.eventsSection {
+  padding: 50px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.seeMore {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.eventGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns like the sketch */
+  gap: 30px;
+}
+
+.eventCard {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.eventCard:hover {
+  transform: translateY(-5px);
+}
+
+.eventImagePlaceholder {
+  width: 100%;
+  height: 150px;
+  background-color: #eee;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+}
+
+/* NEW: VIEW GROUP BUTTON STYLING
+   Styled with brand purple and hover inversion.
+*/
+.viewGroupBtn {
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px;
+  background: transparent;
+  border: 2px solid var(--gradient-end);
+  color: var(--gradient-end);
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.viewGroupBtn:hover {
+  background: var(--gradient-end);
+  color: white;
+}
+
+/* SECTION 4: CALL TO ACTION (CTA)
+  The bottom section for users to host their own events.
+*/
+.postCta {
+  text-align: center;
+  padding: 120px 20px;
+  background-color: white;
+  margin-top: 100px;
+}
+
+.postCta h3 {
+  font-size: 1.5rem;       /* Change this number to make text bigger (2.5) or smaller (1.5) */
+  margin-bottom: 20px;   /* Changes the space between the text and the button below it */
+  color: #333;           /* Changes the text color */
+  letter-spacing: -1px;  /* Makes letters tighter/modern (like a logo) */
+}
+
+.postBtn {
+  padding: 15px 40px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
