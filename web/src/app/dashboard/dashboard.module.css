@@ -50,6 +50,26 @@
   flex-shrink: 0; /* Prevents the logo from getting squashed */
 }
 
+.profileIconLink {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #eadcfb;
+  background: #ffffff;
+  color: var(--gradient-end);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(151, 51, 238, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profileIconLink:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(151, 51, 238, 0.2);
+}
+
 /* SECTION 1.1: ADVANCED SEARCH (Meetup Style)
   This handles the dual 'What' and 'Where' search layout.
 */
