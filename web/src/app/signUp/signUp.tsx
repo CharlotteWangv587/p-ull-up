@@ -6,6 +6,9 @@
  */
 import Link from "next/link";
 import styles from "./signUp.module.css";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabasePublic } from "../../lib/supabase";
 
 /** Inline SVG icons for form fields—no icon library dependency. Reuse styles.inputIcon for position/color. */
 const PersonIcon = () => (
@@ -41,6 +44,58 @@ function GoogleIcon() {
 }
 
 export default function SignUpPage() {
+  const router = useRouter();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+  setError("");
+  setSuccess("");
+  setLoading(true);
+
+  const { error } = await supabasePublic.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        name,
+      },
+    },
+  });
+
+  setLoading(false);
+
+  if (error) {
+    setError(error.message);
+    return;
+  }
+
+  setSuccess("Account created successfully. Please check your email if confirmation is required.");
+  router.push("/login");
+  async function handleGoogleSignUp() {
+  setError("");
+  setSuccess("");
+  setLoading(true);
+
+  const { error } = await supabasePublic.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`,
+    },
+  });
+
+  if (error) {
+    setError(error.message);
+    setLoading(false);
+  }
+}
+}
+
   return (
     <div className={styles.wrapper}>
       <Link href="/" className={styles.backLink} aria-label="Back to home">
@@ -48,18 +103,44 @@ export default function SignUpPage() {
       </Link>
       <div className={styles.card}>
         <h1 className={styles.title}>Create Account</h1>
-        <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+        <form className={styles.form} onSubmit={handleSignUp}>          
           <div className={styles.inputGroup}>
             <PersonIcon />
-            <input className={styles.input} type="text" placeholder="Name" autoComplete="name" aria-label="Name" />
-          </div>
+            <input
+              className={styles.input}
+              type="text"
+              placeholder="Name"
+              autoComplete="name"
+              aria-label="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            </div>
           <div className={styles.inputGroup}>
             <EnvelopeIcon />
-            <input className={styles.input} type="email" placeholder="E-mail" autoComplete="email" aria-label="E-mail" />
-          </div>
+            <input
+              className={styles.input}
+              type="email"
+              placeholder="E-mail"
+              autoComplete="email"
+              aria-label="E-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />          </div>
           <div className={styles.inputGroup}>
             <LockIcon />
-            <input className={styles.input} type="password" placeholder="Password" autoComplete="new-password" aria-label="Password" />
+            <input
+            className={styles.input}
+            type="password"
+            placeholder="Password"
+            autoComplete="new-password"
+            aria-label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           </div>
           <div className={styles.buttons}>
             <button type="submit" className={styles.btnPrimary}>
