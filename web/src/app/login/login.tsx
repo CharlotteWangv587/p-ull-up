@@ -1,7 +1,12 @@
 "use client";
 
+
 import Link from "next/link";
 import styles from "./login.module.css";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {supabasePublic} from "../../lib/supabase";
+
 
 const EnvelopeIcon = () => (
   <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -10,6 +15,7 @@ const EnvelopeIcon = () => (
   </svg>
 );
 
+
 const LockIcon = () => (
   <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
@@ -17,7 +23,63 @@ const LockIcon = () => (
   </svg>
 );
 
+
 export default function LoginPage() {
+  const router = useRouter();
+
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+
+    const { error } = await supabasePublic.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+
+    setLoading(false);
+
+
+    if (error) {
+      setError(error.message);
+      return;
+    }
+
+
+    router.push("/dashboard");
+    router.refresh();
+  }
+
+
+  async function handleGoogleSignIn() {
+    setError("");
+    setLoading(true);
+
+
+    const { error } = await supabasePublic.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  }
+
+
   return (
     <div className={styles.wrapper}>
       <Link href="/" className={styles.backLink} aria-label="Back to home">
@@ -25,7 +87,7 @@ export default function LoginPage() {
       </Link>
       <div className={styles.card}>
         <h1 className={styles.title}>Welcome Back!</h1>
-        <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+        <form className={styles.form} onSubmit={handleLogin}>
           <div className={styles.inputGroup}>
             <EnvelopeIcon />
             <input
@@ -34,6 +96,9 @@ export default function LoginPage() {
               placeholder="Email"
               autoComplete="email"
               aria-label="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <div className={styles.inputGroup}>
@@ -44,6 +109,9 @@ export default function LoginPage() {
               placeholder="Password"
               autoComplete="current-password"
               aria-label="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
           <button type="submit" className={styles.btnPrimary}>
@@ -61,6 +129,7 @@ export default function LoginPage() {
     </div>
   );
 }
+
 
 function GoogleIcon() {
   return (
@@ -84,3 +153,6 @@ function GoogleIcon() {
     </svg>
   );
 }
+
+
+
