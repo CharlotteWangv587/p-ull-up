@@ -1,10 +1,12 @@
 "use client";
 
+
 import Link from "next/link";
 import styles from "./login.module.css";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {supabasePublic} from "../../lib/supabase";
+
 
 const EnvelopeIcon = () => (
   <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,6 +15,7 @@ const EnvelopeIcon = () => (
   </svg>
 );
 
+
 const LockIcon = () => (
   <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
@@ -20,38 +23,47 @@ const LockIcon = () => (
   </svg>
 );
 
+
 export default function LoginPage() {
   const router = useRouter();
+
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setLoading(true);
+
 
     const { error } = await supabasePublic.auth.signInWithPassword({
       email,
       password,
     });
 
+
     setLoading(false);
+
 
     if (error) {
       setError(error.message);
       return;
     }
 
+
     router.push("/dashboard");
     router.refresh();
   }
 
+
   async function handleGoogleSignIn() {
     setError("");
     setLoading(true);
+
 
     const { error } = await supabasePublic.auth.signInWithOAuth({
       provider: "google",
@@ -60,11 +72,13 @@ export default function LoginPage() {
       },
     });
 
+
     if (error) {
       setError(error.message);
       setLoading(false);
     }
   }
+
 
   return (
     <div className={styles.wrapper}>
@@ -116,6 +130,7 @@ export default function LoginPage() {
   );
 }
 
+
 function GoogleIcon() {
   return (
     <svg className={styles.googleIcon} viewBox="0 0 24 24" width="20" height="20" aria-hidden>
@@ -138,3 +153,6 @@ function GoogleIcon() {
     </svg>
   );
 }
+
+
+
