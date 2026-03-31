@@ -29,6 +29,7 @@
   font-size: 1.5rem;
   color: var(--gradient-end);
   flex-shrink: 0;
+  text-decoration: none;
 }
 
 .searchContainer {

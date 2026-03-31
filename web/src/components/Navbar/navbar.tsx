@@ -1,13 +1,21 @@
 import Link from 'next/link';
 import styles from './navbar.module.css';
+import { ReactNode } from 'react';
 
-export default function Navbar() {
+type NavbarProps = {
+  showAuth?: boolean;
+  rightContent?: ReactNode;
+};
+
+export default function Navbar({ showAuth = true, rightContent }: NavbarProps) {
   return (
     <nav className={styles.navbar}>
 
       {/* LEFT GROUP: Logo and Search Bar tied together */}
       <div className={styles.navLeft}>
-        <div className={styles.logo}>p-ull up</div>
+        <Link href="/" className={styles.logo} aria-label="Go to home page">
+          p-ull up
+        </Link>
         <div className={styles.searchContainer}>
           <div className={styles.searchWrapper}>
             <div className={styles.searchSection}>
@@ -28,12 +36,16 @@ export default function Navbar() {
       </div>
 
       {/* RIGHT GROUP: Auth Links */}
-      <div className={styles.navRight}>
-        <Link href="/login" className={styles.navLink}>Login</Link>
-        <Link href="/signUp">
-          <button className={styles.signUpBtn}>Create Account</button>
-        </Link>
-      </div>
+      {showAuth ? (
+        <div className={styles.navRight}>
+          <Link href="/login" className={styles.navLink}>Login</Link>
+          <Link href="/signUp">
+            <button className={styles.signUpBtn}>Create Account</button>
+          </Link>
+        </div>
+      ) : (
+        <div className={styles.navRight}>{rightContent}</div>
+      )}
 
     </nav>
   );

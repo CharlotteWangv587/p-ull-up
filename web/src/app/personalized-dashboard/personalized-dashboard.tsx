@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import styles from "../dashboard/dashboard.module.css";
+import Navbar from "@/components/Navbar/navbar";
 
 const ProfileIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -29,61 +30,39 @@ export default function PersonalizedDashboardPage() {
 
   return (
     <div className={styles.container}>
-      <nav className={styles.navbar}>
-        <div className={styles.navLeft}>
-          <div className={styles.logo}>p-ull up</div>
-
-          <div className={styles.searchContainer}>
-            <div className={styles.searchWrapper}>
-              <div className={styles.searchSection}>
-                <input type="text" placeholder="Search events..." className={styles.searchInput} />
-              </div>
-
-              <div className={styles.divider}></div>
-
-              <div className={styles.searchSection}>
-                <input type="text" placeholder="City, State" className={styles.searchInput} />
-              </div>
-
-              <button className={styles.searchIconBtn} aria-label="Search events">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.navRight}>
-          <button type="button" className={styles.iconActionBtn} aria-label="View notifications">
-            <NotificationIcon />
-          </button>
-
-          <div className={styles.menuWrap}>
-            <button
-              type="button"
-              className={styles.circleIcon}
-              onClick={() => setMenuOpen((prev) => !prev)}
-              aria-expanded={menuOpen}
-              aria-haspopup="menu"
-              aria-label="Open profile menu"
-            >
-              <ProfileIcon />
+      <Navbar
+        showAuth={false}
+        rightContent={
+          <>
+            <button type="button" className={styles.iconActionBtn} aria-label="View notifications">
+              <NotificationIcon />
             </button>
-            {menuOpen && (
-              <div className={styles.dropdown} role="menu">
-                <Link href="/profile" className={styles.dropdownLink} role="menuitem" onClick={() => setMenuOpen(false)}>
-                  Edit profile
-                </Link>
-                <button type="button" role="menuitem">Liked Events</button>
-                <button type="button" role="menuitem">Attending Events</button>
-                <button type="button" role="menuitem">Sign out</button>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
+
+            <div className={styles.menuWrap}>
+              <button
+                type="button"
+                className={styles.circleIcon}
+                onClick={() => setMenuOpen((prev) => !prev)}
+                aria-expanded={menuOpen}
+                aria-haspopup="menu"
+                aria-label="Open profile menu"
+              >
+                <ProfileIcon />
+              </button>
+              {menuOpen && (
+                <div className={styles.dropdown} role="menu">
+                  <Link href="/profile" className={styles.dropdownLink} role="menuitem" onClick={() => setMenuOpen(false)}>
+                    Edit profile
+                  </Link>
+                  <button type="button" role="menuitem">Liked Events</button>
+                  <button type="button" role="menuitem">Attending Events</button>
+                  <button type="button" role="menuitem">Sign out</button>
+                </div>
+              )}
+            </div>
+          </>
+        }
+      />
 
       <header className={styles.hero}>
         <h1>Find your group. Attend the event.</h1>
