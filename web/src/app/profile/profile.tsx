@@ -200,8 +200,8 @@ export default function ProfilePage() {
             {menuOpen && (
               <div className={styles.dropdown} role="menu">
                 <button type="button" role="menuitem">Edit profile</button>
-                <button type="button" role="menuitem">My friends</button>
-                <button type="button" role="menuitem">Account settings</button>
+                <button type="button" role="menuitem">Liked Events</button>
+                <button type="button" role="menuitem">Attending Events</button>
                 <button type="button" role="menuitem">Sign out</button>
               </div>
             )}
