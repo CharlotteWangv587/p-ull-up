@@ -1,0 +1,110 @@
+:root {
+  --gradient-start: #da22ff;
+  --gradient-end: #9733ee;
+  --text-dark: #333333;
+  --text-light: #ffffff;
+  --bg-light: #f4f4f9;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 40px;
+  background: white;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  width: 100%;
+}
+
+.navLeft {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-grow: 1;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: var(--gradient-end);
+  flex-shrink: 0;
+}
+
+.searchContainer {
+  width: 100%;
+  max-width: 500px;
+}
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #e6e6e6;
+  border-radius: 40px;
+  padding: 4px 4px 4px 16px;
+  transition: all 0.2s ease;
+}
+
+.searchWrapper:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-color: var(--gradient-end);
+}
+
+.searchSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 8px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: #e6e6e6;
+  margin: 0 8px;
+}
+
+.searchIconBtn {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.navLink {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.signUpBtn {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: white;
+  padding: 10px 22px;
+  border-radius: 25px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}

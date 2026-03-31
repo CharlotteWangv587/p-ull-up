@@ -162,6 +162,14 @@ Done when:
 
 ## 5) Fix auth in the API, recognize validate token as user
 
+download: SSR package
+
+''
+cd web
+npm install @supabase/supabase-js @supabase/ssr
+
+''
+
 Right now, your stub endpoints only check whether the request includes an Authorization: Bearer <token> header, but they do not verify that the token is valid or tied to a real logged-in user. You should upgrade this by validating the token with Supabase and then returning the authenticated user’s ID (or rejecting the request with 401 if the token is invalid).
 
 ### Add: `requireUser()` helper (suggested)

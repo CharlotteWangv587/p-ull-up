@@ -1,0 +1,242 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--gradient-end) 0%, var(--gradient-start) 100%);
+  display: flex;
+  flex-direction: column;    /* ← stack navbar and card vertically */
+  align-items: center;
+  gap: 40px;          /* ← space between Navbar and card */
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 40px 40px 48px 40px;
+  width: 100%;
+  max-width: 560px;
+  position: relative;
+  transition: transform 0.2s;   /* ← add this */
+}
+
+.card:hover {
+  transform: translateY(-5px);  /* ← exact same as eventCard:hover */
+}
+
+.logoArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.logo {
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  color: var(--gradient-end); 
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--gradient-end);
+  padding: 3px 10px;
+  border-radius: 25px;
+}
+
+.iconRow {
+  display: flex;
+  gap: 8px;
+  color: #aaa;
+  font-size: 18px;
+}
+
+.tagline {
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.heading {
+  font-size: 22px;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 28px;
+  letter-spacing: -0.01em;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  color: #555;
+  letter-spacing: 0.03em;
+}
+
+.input {
+  border: 1px solid #e6e6e6;
+  border-radius: 25px;        /* was 10px — rounder to match dashboard */
+  padding: 9px 16px;          /* more left padding for rounder feel */
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  background: white;
+  outline: none;
+  transition: all 0.2s ease;  /* was just border-color */
+}
+
+.input:focus {
+  border-color: var(--gradient-end);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);  /* ← same glow as searchWrapper */
+}
+
+.textarea {
+  composes: input;
+  resize: vertical;
+  min-height: 88px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.row .field {
+  flex: 1;
+}
+
+.tbdRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.tbdLabel {
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  color: #777;
+}
+
+.inputWithIcon {
+  position: relative;
+}
+
+.inputWithIcon .input {
+  padding-right: 36px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.inputIcon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 15px;
+  pointer-events: none;
+}
+
+.photoSection {
+  border: 2px dashed #e6e6e6;   /* was #bbb, match input rim color */
+  border-radius: 25px;           /* was 3px — match new input radius */
+  padding: 20px;
+  background: white;             /* was #faf9f7 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.photoSection:hover {
+  border-color: var(--gradient-end);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.photoLabel {
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.photoButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.photoBtn {
+  padding: 10px 22px;
+  font-size: 0.95rem;
+  border: 2px solid var(--gradient-end);
+  border-radius: 25px;           /* was 10px */
+  background: transparent;       /* was #fff */
+  color: var(--gradient-end);    /* was #444 */
+  cursor: pointer;
+  font-weight: 800;
+  transition: 0.2s;
+}
+
+.photoBtn:hover {
+  background: var(--gradient-end);
+  color: white;                  /* add this */
+}
+
+.optionalRow {
+  display: flex;
+  gap: 12px;
+}
+
+.optionalRow .field {
+  flex: 1;
+}
+
+.optionalTag {
+  font-size: 11px;
+  color: #aaa;
+  font-style: italic;
+  margin-left: 4px;
+}
+
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  color: #666;
+}
+
+.submitBtn {
+  margin-top: 10px;
+  padding: 15px 40px;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: white;
+  border: none;
+  border-radius: 30px;                
+  font-size: 1.1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.2s;
+}
+
+.submitBtn:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);   /* subtle lift on hover */
+  box-shadow: 0 4px 12px rgba(151, 51, 238, 0.4);  /* purple glow */
+}
