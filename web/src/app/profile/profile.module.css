@@ -147,6 +147,24 @@
   color: var(--gradient-end);
 }
 
+.dropdown a {
+  display: block;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 14px;
+  color: #374151;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.dropdown a:hover {
+  background: #f6f0ff;
+  color: var(--gradient-end);
+}
+
 .main {
   display: grid;
   place-items: center;

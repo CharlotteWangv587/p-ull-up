@@ -56,7 +56,9 @@ export default function PersonalizedDashboardPage() {
                   </Link>
                   <button type="button" role="menuitem">Liked Events</button>
                   <button type="button" role="menuitem">Attending Events</button>
-                  <button type="button" role="menuitem">Sign out</button>
+                  <Link href="/" className={styles.dropdownLink} role="menuitem" onClick={() => setMenuOpen(false)}>
+                    Sign out
+                  </Link>
                 </div>
               )}
             </div>
