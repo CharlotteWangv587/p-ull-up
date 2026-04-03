@@ -52,49 +52,52 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
   async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
-  e.preventDefault();
-  setError("");
-  setSuccess("");
-  setLoading(true);
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
 
-  const { error } = await supabasePublic.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        name,
+    const { error } = await supabasePublic.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+        },
       },
-    },
-  });
+    });
 
-  setLoading(false);
-
-  if (error) {
-    setError(error.message);
-    return;
-  }
-
-  setSuccess("Account created successfully. Please check your email if confirmation is required.");
-  router.push("/login");
-  async function handleGoogleSignUp() {
-  setError("");
-  setSuccess("");
-  setLoading(true);
-
-  const { error } = await supabasePublic.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
-    },
-  });
-
-  if (error) {
-    setError(error.message);
     setLoading(false);
+
+    if (error) {
+      setError(error.message);
+      return;
+    }
+
+    setSuccess("Account created successfully. Please check your email if confirmation is required.");
+    router.push("/personalized-dashboard");
+    router.refresh();
   }
-}
-}
+
+  async function handleGoogleSignUp() {
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    const { error } = await supabasePublic.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -146,14 +149,14 @@ export default function SignUpPage() {
             <button type="submit" className={styles.btnPrimary}>
               SIGN UP
             </button>
-            <button type="button" className={styles.btnGoogle} aria-label="Sign up with Google">
+            <button type="button" className={styles.btnGoogle} onClick={handleGoogleSignUp} aria-label="Sign up with Google">
               <GoogleIcon />
               Sign up with Google
             </button>
           </div>
         </form>
         <p className={styles.footer}>
-          Returning User? <Link href="/login" className={styles.signInLink}>Sign in</Link>
+          Returning User? <Link href="/personalized-dashboard" className={styles.signInLink}>Sign in</Link>
         </p>
       </div>
     </div>

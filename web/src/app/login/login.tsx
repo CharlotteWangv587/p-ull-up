@@ -55,7 +55,7 @@ export default function LoginPage() {
     }
 
 
-    router.push("/dashboard");
+    router.push("/personalized-dashboard");
     router.refresh();
   }
 
@@ -123,7 +123,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className={styles.footer}>
-          First time? <Link href="/signUp" className={styles.createLink}>Create Account</Link>
+          First time? <Link href="/personalized-dashboard" className={styles.createLink}>Create Account</Link>
         </p>
       </div>
     </div>
