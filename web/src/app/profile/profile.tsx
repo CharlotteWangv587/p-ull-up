@@ -202,7 +202,9 @@ export default function ProfilePage() {
                 <button type="button" role="menuitem">Edit profile</button>
                 <button type="button" role="menuitem">Liked Events</button>
                 <button type="button" role="menuitem">Attending Events</button>
-                <button type="button" role="menuitem">Sign out</button>
+                <Link href="/" role="menuitem" onClick={() => setMenuOpen(false)}>
+                  Sign out
+                </Link>
               </div>
             )}
           </div>
