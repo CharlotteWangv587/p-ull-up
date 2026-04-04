@@ -2,18 +2,21 @@
 
 import { useState } from 'react';
 import styles from './eventposting.module.css';
-import Navbar from '@/components/Navbar/navbar';
+import Navbar from '@/components/appNavbar/appNavbar';
 
 export default function EventPosting() {
   const [tbdChecked, setTbdChecked] = useState(false);
   const [allowWaitlist, setAllowWaitlist] = useState(false);
 
   return (
+    <>
+    
+    <Navbar showSearch={false}/>
+
     <div className={styles.page}>
-      <Navbar />
       <div className={styles.card}>
 
-        <h1 className={styles.heading}>Create event</h1>
+        <h1 className={styles.heading}>Create An Event</h1>
 
         <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
 
@@ -113,10 +116,11 @@ export default function EventPosting() {
             Allow waitlist / drop-in check-in
           </label>
 
-          <button type="submit" className={styles.submitBtn}>POST EVENT</button>
+          <button type="submit" className={styles.submitBtn}>Post Event</button>
 
         </form>
       </div>
     </div>
+    </>
   );
 }

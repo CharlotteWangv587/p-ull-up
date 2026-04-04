@@ -143,13 +143,17 @@ export default function SignUpPage() {
           />
           </div>
           <div className={styles.buttons}>
+            <Link href="/login">
             <button type="submit" className={styles.btnPrimary}>
-              SIGN UP
+              Sign Up
             </button>
+            </Link>
+            <Link href='/login'>
             <button type="button" className={styles.btnGoogle} aria-label="Sign up with Google">
               <GoogleIcon />
               Sign up with Google
             </button>
+            </Link>
           </div>
         </form>
         <p className={styles.footer}>

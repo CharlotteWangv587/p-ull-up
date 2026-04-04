@@ -5,6 +5,7 @@
   flex-direction: column;    /* ← stack navbar and card vertically */
   align-items: center;
   gap: 40px;          /* ← space between Navbar and card */
+  padding-top: 30px;
 }
 
 .card {
@@ -56,11 +57,12 @@
 }
 
 .heading {
-  font-size: 22px;
-  font-weight: bold;
-  color: #1a1a1a;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gradient-end);
+  text-align: center;
   margin-bottom: 28px;
-  letter-spacing: -0.01em;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .form {
@@ -100,6 +102,7 @@
 
 .textarea {
   composes: input;
+  font-family: inherit;
   resize: vertical;
   min-height: 88px;
 }

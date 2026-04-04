@@ -114,13 +114,17 @@ export default function LoginPage() {
               required
             />
           </div>
+          <Link href="/personalized-dashboard">
           <button type="submit" className={styles.btnPrimary}>
             Sign in
           </button>
+          </Link>
+          <Link href="/personalized-dashboard">
           <button type="button" className={styles.btnGoogle} aria-label="Sign in with Google">
             <GoogleIcon />
             Sign in with Google
           </button>
+          </Link>
         </form>
         <p className={styles.footer}>
           First time? <Link href="/signUp" className={styles.createLink}>Create Account</Link>

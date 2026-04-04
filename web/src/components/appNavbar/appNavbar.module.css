@@ -1,0 +1,256 @@
+:root {
+  --gradient-start: #da22ff;
+  --gradient-end: #9733ee;
+  --text-dark: #333333;
+  --text-light: #ffffff;
+  --bg-light: #f4f4f9;
+}
+
+/* SECTION 1: NAVIGATION BAR
+  The top bar containing the Logo, Search, and Auth buttons.
+*/
+.navbar {
+  display: flex; /* Aligns all items in a horizontal row */
+  justify-content: space-between; /* Pushes Logo+Search to left and Auth to right */
+  align-items: center; /* Vertically centers everything in the bar */
+  padding: 10px 40px;
+  background: white;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow for a 'floating' effect */
+}
+
+/* NAV LEFT: Keeps Logo and Search snug together on the left side */
+.navLeft {
+  display: flex;
+  align-items: center;
+  gap: 30px; /* Space specifically between Logo and Search Bar */
+  flex-grow: 1; /* Allows this group to take up the left/middle space */
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: var(--gradient-end); /* Uses our brand purple */
+  flex-shrink: 0; /* Prevents the logo from getting squashed */
+}
+
+.profileIconLink {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #eadcfb;
+  background: #ffffff;
+  color: var(--gradient-end);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(151, 51, 238, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profileIconLink:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(151, 51, 238, 0.2);
+}
+
+/* SECTION 1.1: ADVANCED SEARCH (Meetup Style)
+  This handles the dual 'What' and 'Where' search layout.
+*/
+.searchContainer {
+  width: 100%;
+  max-width: 500px; /* Limits width to keep it close to the logo */
+}
+
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #e6e6e6;
+  border-radius: 40px; /* Creates the 'Pill' shape from your sketch */
+  padding: 4px 4px 4px 16px;
+  transition: all 0.2s ease;
+}
+
+/* Interactivity: Adds a brand-colored glow when the user hovers */
+.searchWrapper:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-color: var(--gradient-end);
+}
+
+.searchSection {
+  flex: 1; /* Ensures 'Keyword' and 'Location' inputs take up equal width */
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 8px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+/* The vertical line separating 'Search' and 'Location' */
+.divider {
+  width: 1px;
+  height: 24px;
+  background-color: #e6e6e6;
+  margin: 0 8px;
+}
+
+.searchIconBtn {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* SECTION 1.2: AUTH BUTTONS
+  Login and Sign Up buttons on the far right.
+*/
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.navLink {
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.signUpBtn {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: white;
+  padding: 10px 22px;
+  border-radius: 25px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.iconActionBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #eadcfb;
+  background: #ffffff;
+  color: var(--gradient-end);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(151, 51, 238, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.iconActionBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(151, 51, 238, 0.2);
+}
+
+.menuWrap {
+  position: relative;
+}
+
+
+.circleIcon {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #eadcfb;
+  border-radius: 50%;
+  background: #fff;
+  color: #5b2e9f;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.circleIcon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(151, 51, 238, 0.15);
+}
+
+.circleIcon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 190px;
+  background: #ffffff;
+  border: 1px solid #efebf8;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(22, 15, 40, 0.15);
+  padding: 8px;
+  display: grid;
+  gap: 4px;
+  z-index: 20;
+}
+
+.dropdown button {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #374151;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dropdown button:hover {
+  background: #f6f0ff;
+  color: var(--gradient-end);
+}
+
+.dropdownLink {
+  width: 100%;
+  display: block;
+  text-align: left;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: transparent;
+  font-size: 14px;
+  color: #374151;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.dropdownLink:hover {
+  background: #f6f0ff;
+  color: var(--gradient-end);
+}
+
+.avatarLink {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #eadcfb;
+  box-shadow: 0 4px 10px rgba(151, 51, 238, 0.12);
+  display: inline-flex;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

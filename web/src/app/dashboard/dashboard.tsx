@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import styles from "./dashboard.module.css";
-import Navbar from '@/components/Navbar/navbar';
+import Navbar from '@/components/marketingNavbar/marketingNavbar';
 
 export default function PublicDashboardPage() {
   /** * MOCK DATA: These represent real events that will eventually 
@@ -62,7 +62,7 @@ export default function PublicDashboardPage() {
       */}
       <section className={styles.postCta}>
         <h3>Have an event in mind?</h3>
-        <Link href="/eventposting">
+        <Link href="/login">
           <button className={styles.postBtn}>Post your own event...</button>
         </Link>
       </section>
