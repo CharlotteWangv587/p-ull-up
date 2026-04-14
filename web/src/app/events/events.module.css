@@ -1,0 +1,44 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 18px 70px 18px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.title {
+  font-size: 34px;
+  letter-spacing: -0.03em;
+}
+
+.createLink {
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: #ffffff;
+  font-weight: 900;
+  box-shadow: 0 12px 24px rgba(151, 51, 238, 0.22);
+}
+
+.createLink:hover {
+  opacity: 0.92;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+}
+
