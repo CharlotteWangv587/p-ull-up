@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Navbar from "@/components/Navbar/navbar";
 import TagButton from "@/components/TagButton/tag-button";
 import RsvpButton from "@/components/RsvpButton/rsvp-button";
+import CommentSection from "@/components/Comment/comment-section";
 import styles from "./event-details.module.css";
 
 export type EventDetailsData = {
@@ -19,45 +20,14 @@ export type EventDetailsData = {
   goingCount?: number;
 };
 
-type Comment = {
-  id: string;
-  author: string;
-  body: string;
-  createdAt: string;
-};
-
 export default function EventDetails({ event }: { event: EventDetailsData }) {
   const [rsvp, setRsvp] = useState<"interested" | "going" | null>(null);
-  const [commentText, setCommentText] = useState("");
-  const [comments, setComments] = useState<Comment[]>(() => [
-    {
-      id: "c1",
-      author: "Someone",
-      body: "This looks fun — who’s carpooling?",
-      createdAt: "Just now",
-    },
-  ]);
 
   const counts = useMemo(() => {
     const interested = (event.interestedCount ?? 0) + (rsvp === "interested" ? 1 : 0);
     const going = (event.goingCount ?? 0) + (rsvp === "going" ? 1 : 0);
     return { interested, going };
   }, [event.goingCount, event.interestedCount, rsvp]);
-
-  function submitComment() {
-    const body = commentText.trim();
-    if (!body) return;
-    setComments((prev) => [
-      {
-        id: `c-${Date.now()}`,
-        author: "You",
-        body,
-        createdAt: "Now",
-      },
-      ...prev,
-    ]);
-    setCommentText("");
-  }
 
   const priceLabel = event.price ? event.price : "Free";
 
@@ -96,7 +66,7 @@ export default function EventDetails({ event }: { event: EventDetailsData }) {
               <p className={styles.detailsText}>{event.details}</p>
             </section>
 
-            {/* 4. INTERESTED/GOING BUTTONS (RSVP label removed) */}
+            {/* 4. INTERESTED / GOING */}
             <section className={styles.block} aria-label="RSVP">
               <div className={styles.rsvpRow}>
                 <RsvpButton
@@ -117,29 +87,7 @@ export default function EventDetails({ event }: { event: EventDetailsData }) {
             {/* 5. COMMENTS */}
             <section className={styles.block} id="comments" aria-label="Comments">
               <h2 className={styles.blockLabel}>Comments</h2>
-
-              <div className={styles.commentForm}>
-                <textarea
-                  className={styles.commentInput}
-                  placeholder="Write a comment…"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                />
-                <button type="button" className={styles.sendBtn} onClick={submitComment}>
-                  Send
-                </button>
-              </div>
-
-              <div className={styles.commentList}>
-                {comments.map((c) => (
-                  <div key={c.id} className={styles.comment}>
-                    <div className={styles.commentMeta}>
-                      {c.author} · {c.createdAt}
-                    </div>
-                    <div className={styles.commentBody}>{c.body}</div>
-                  </div>
-                ))}
-              </div>
+              <CommentSection eventId={event.id} />
             </section>
           </div>
 
@@ -158,5 +106,4 @@ export default function EventDetails({ event }: { event: EventDetailsData }) {
       </main>
     </div>
   );
-
 }
