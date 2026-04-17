@@ -22,23 +22,13 @@ const UserIcon = () => (
 type ProfileDropdownProps = {
   /** Called when the user clicks Sign out */
   onSignOut?: () => void;
-  /** Called when any menu item is selected (for custom routing) */
-  onCreatedEvents?: () => void;
-  onLikedEvents?: () => void;
-  onAttendingEvents?: () => void;
 };
 
 /**
  * Reusable profile menu button with dropdown.
- * Wire onSignOut / onCreatedEvents / onLikedEvents / onAttendingEvents to your
- * auth context and routing as needed.
+ * Wire onSignOut to your auth context as needed.
  */
-export default function ProfileDropdown({
-  onSignOut,
-  onCreatedEvents,
-  onLikedEvents,
-  onAttendingEvents,
-}: ProfileDropdownProps) {
+export default function ProfileDropdown({ onSignOut }: ProfileDropdownProps) {
   const [open, setOpen] = useState(false);
 
   const close = () => setOpen(false);
@@ -58,41 +48,21 @@ export default function ProfileDropdown({
 
       {open && (
         <div className={styles.dropdown} role="menu">
-          <Link
-            href="/profile"
-            className={styles.dropdownLink}
-            role="menuitem"
-            onClick={close}
-          >
+          <Link href="/profile" className={styles.dropdownLink} role="menuitem" onClick={close}>
             Edit profile
           </Link>
 
-          <button
-            type="button"
-            className={styles.dropdownBtn}
-            role="menuitem"
-            onClick={() => { close(); onCreatedEvents?.(); }}
-          >
+          <Link href="/created-events" className={styles.dropdownLink} role="menuitem" onClick={close}>
             Created Events
-          </button>
+          </Link>
 
-          <button
-            type="button"
-            className={styles.dropdownBtn}
-            role="menuitem"
-            onClick={() => { close(); onLikedEvents?.(); }}
-          >
+          <Link href="/liked-events" className={styles.dropdownLink} role="menuitem" onClick={close}>
             Liked Events
-          </button>
+          </Link>
 
-          <button
-            type="button"
-            className={styles.dropdownBtn}
-            role="menuitem"
-            onClick={() => { close(); onAttendingEvents?.(); }}
-          >
+          <Link href="/attending-events" className={styles.dropdownLink} role="menuitem" onClick={close}>
             Attending Events
-          </button>
+          </Link>
 
           <Link
             href="/"
