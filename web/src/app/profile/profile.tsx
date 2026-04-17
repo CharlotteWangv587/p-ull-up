@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import styles from "./profile.module.css";
 import Navbar from "@/components/Navbar/navbar";
 import NotificationButton from "@/components/NotificationButton/notification-button";
@@ -23,6 +23,51 @@ const DEFAULT_VALUES: ProfileValues = {
 };
 
 const DRAFT_KEY = "pullup-profile-draft";
+const PREFS_KEY = "pullup-notif-prefs";
+
+type NotifPrefs = {
+  commentReplies: boolean;
+  myEventLiked: boolean;
+  myEventGoing: boolean;
+  likedEventComment: boolean;
+  attendingEventComment: boolean;
+};
+
+const DEFAULT_PREFS: NotifPrefs = {
+  commentReplies: true,
+  myEventLiked: true,
+  myEventGoing: true,
+  likedEventComment: false,
+  attendingEventComment: false,
+};
+
+const NOTIF_SETTINGS: { key: keyof NotifPrefs; label: string; description: string }[] = [
+  {
+    key: "commentReplies",
+    label: "Replies to my comments",
+    description: "Get notified when someone responds to a comment you left on an event.",
+  },
+  {
+    key: "myEventLiked",
+    label: "Likes on my events",
+    description: "Get notified when someone likes an event you created.",
+  },
+  {
+    key: "myEventGoing",
+    label: "RSVPs on my events",
+    description: "Get notified when someone marks themselves as going to an event you created.",
+  },
+  {
+    key: "likedEventComment",
+    label: "Comments on events I liked",
+    description: "Get notified when a new comment is posted on an event you've liked.",
+  },
+  {
+    key: "attendingEventComment",
+    label: "Comments on events I'm attending",
+    description: "Get notified when a new comment is posted on an event you're attending.",
+  },
+];
 
 function UserIcon() {
   return (
@@ -79,6 +124,7 @@ export default function ProfilePage() {
   const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [status, setStatus] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [notifPrefs, setNotifPrefs] = useState<NotifPrefs>(DEFAULT_PREFS);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -86,12 +132,20 @@ export default function ProfilePage() {
     if (!rawDraft) return;
     try {
       const parsed = JSON.parse(rawDraft) as Partial<ProfileValues>;
-      setValues((prev) => ({
-        ...prev,
-        ...parsed,
-      }));
+      setValues((prev) => ({ ...prev, ...parsed }));
     } catch {
       localStorage.removeItem(DRAFT_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    const raw = localStorage.getItem(PREFS_KEY);
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw) as Partial<NotifPrefs>;
+      setNotifPrefs((prev) => ({ ...prev, ...parsed }));
+    } catch {
+      localStorage.removeItem(PREFS_KEY);
     }
   }, []);
 
@@ -101,6 +155,14 @@ export default function ProfilePage() {
     }, 400);
     return () => window.clearTimeout(timeout);
   }, [values]);
+
+  useEffect(() => {
+    localStorage.setItem(PREFS_KEY, JSON.stringify(notifPrefs));
+  }, [notifPrefs]);
+
+  const togglePref = useCallback((key: keyof NotifPrefs) => {
+    setNotifPrefs((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
 
   const formReady = useMemo(() => {
     return values.name.trim().length > 1 && values.email.includes("@");
@@ -163,7 +225,7 @@ export default function ProfilePage() {
       />
 
       <main className={styles.main}>
-        <section className={styles.card}>
+        <section className={styles.card} id="personal-info">
           <p className={styles.sectionLabel}>Personal Information</p>
           <form className={styles.form} onSubmit={onSubmit}>
             <div className={styles.profileRow}>
@@ -243,6 +305,34 @@ export default function ProfilePage() {
               </button>
             </div>
           </form>
+        </section>
+
+        {/* ── Notification Settings ── */}
+        <section className={styles.card} id="notification-settings">
+          <p className={styles.sectionLabel}>Notification Settings</p>
+          <p className={styles.sectionHint}>
+            Choose what you&apos;d like to be notified about. Changes save automatically.
+          </p>
+
+          <ul className={styles.notifList}>
+            {NOTIF_SETTINGS.map(({ key, label, description }) => (
+              <li key={key} className={styles.notifRow}>
+                <div className={styles.notifText}>
+                  <span className={styles.notifLabel}>{label}</span>
+                  <span className={styles.notifDesc}>{description}</span>
+                </div>
+                <label className={styles.toggle} aria-label={label}>
+                  <input
+                    type="checkbox"
+                    className={styles.toggleInput}
+                    checked={notifPrefs[key]}
+                    onChange={() => togglePref(key)}
+                  />
+                  <span className={styles.toggleSlider} />
+                </label>
+              </li>
+            ))}
+          </ul>
         </section>
       </main>
     </div>
