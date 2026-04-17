@@ -1,0 +1,75 @@
+.menuWrap {
+  position: relative;
+}
+
+.circleIcon {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #eadcfb;
+  border-radius: 50%;
+  background: #fff;
+  color: #5b2e9f;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.circleIcon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(151, 51, 238, 0.15);
+}
+
+.circleIcon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 190px;
+  background: #ffffff;
+  border: 1px solid #efebf8;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(22, 15, 40, 0.15);
+  padding: 8px;
+  display: grid;
+  gap: 4px;
+  z-index: 50;
+}
+
+.dropdownBtn {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #374151;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.dropdownBtn:hover {
+  background: #f6f0ff;
+  color: #9733ee;
+}
+
+.dropdownLink {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  color: #374151;
+  padding: 9px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.dropdownLink:hover {
+  background: #f6f0ff;
+  color: #9733ee;
+}

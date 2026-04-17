@@ -67,6 +67,20 @@
   outline: none;
 }
 
+.searchCategory {
+  border: none;
+  background: transparent;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #9733ee;
+  padding: 8px 4px 8px 10px;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+}
+
 .divider {
   width: 1px;
   height: 24px;

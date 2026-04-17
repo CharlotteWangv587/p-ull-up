@@ -68,10 +68,9 @@ export default function PublicDashboardPage() {
       */}
       <header className={styles.hero}>
         <h1>Find your group. Attend the event.</h1>
-        <p className={styles.tagline}>p-ull up: Social Coordination for Off-Campus Events</p>
+        <p className={styles.tagline}>p-ull up: discover functions happening all over the 5Cs</p>
         <p className={styles.description}>
-          Don't miss out just because you lack a group. Match with nearby event-goers, 
-          organize committed attendance, and coordinate safe carpooling.
+          where you'll go to find what you're doing when you're off student mode
         </p>
       </header>
 

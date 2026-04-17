@@ -1,8 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./profile.module.css";
+import Navbar from "@/components/Navbar/navbar";
+import NotificationButton from "@/components/NotificationButton/notification-button";
+import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
 
 type ProfileValues = {
   name: string;
@@ -13,39 +15,20 @@ type ProfileValues = {
 };
 
 const DEFAULT_VALUES: ProfileValues = {
-  name: "Franklyn Forson",
-  email: "franklyn@example.com",
-  location: "Charlotte, NC",
+  name: "Vika Prokopenko",
+  email: "vika@example.com",
+  location: "Claremont, CA",
   instagram: "@pullupcommunity",
   password: "",
 };
 
 const DRAFT_KEY = "pullup-profile-draft";
 
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  );
-}
-
 function UserIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
       <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-}
-
-function CloudIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25" />
-      <path d="m8 16 4 4 4-4" />
-      <path d="M12 12v8" />
     </svg>
   );
 }
@@ -90,7 +73,6 @@ function EyeOffIcon() {
 
 export default function ProfilePage() {
   const [values, setValues] = useState<ProfileValues>(DEFAULT_VALUES);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -170,46 +152,15 @@ export default function ProfilePage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.navbar}>
-        <div className={styles.navLeft}>
-          <Link href="/" className={styles.logo} aria-label="Back to home">
-            p-ull up
-          </Link>
-          <div className={styles.searchWrapper}>
-            <input className={styles.searchInput} placeholder="Search events, groups..." aria-label="Search" />
-            <button type="button" className={styles.searchButton} aria-label="Search">
-              <SearchIcon />
-            </button>
-          </div>
-        </div>
-        <div className={styles.navActions}>
-          <button type="button" className={styles.circleIcon} aria-label="Cloud sync">
-            <CloudIcon />
-          </button>
-          <div className={styles.menuWrap}>
-            <button
-              type="button"
-              className={styles.circleIcon}
-              onClick={() => setMenuOpen((prev) => !prev)}
-              aria-haspopup="menu"
-              aria-expanded={menuOpen}
-              aria-label="Open profile menu"
-            >
-              <UserIcon />
-            </button>
-            {menuOpen && (
-              <div className={styles.dropdown} role="menu">
-                <button type="button" role="menuitem">Edit profile</button>
-                <button type="button" role="menuitem">Liked Events</button>
-                <button type="button" role="menuitem">Attending Events</button>
-                <Link href="/" role="menuitem" onClick={() => setMenuOpen(false)}>
-                  Sign out
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
+      <Navbar
+        showAuth={false}
+        rightContent={
+          <>
+            <NotificationButton />
+            <ProfileDropdown />
+          </>
+        }
+      />
 
       <main className={styles.main}>
         <section className={styles.card}>

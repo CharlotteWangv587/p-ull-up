@@ -1,0 +1,45 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #eadcfb;
+  background: #ffffff;
+  color: #5b2e9f;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(151, 51, 238, 0.15);
+}
+
+.btn svg {
+  width: 19px;
+  height: 19px;
+}
+
+.badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+  pointer-events: none;
+}
