@@ -114,6 +114,11 @@ export default function LoginPage() {
               required
             />
           </div>
+          <div className={styles.forgotRow}>
+            <Link href="/forgot-password" className={styles.forgotLink}>
+              Forgot password?
+            </Link>
+          </div>
           <button type="submit" className={styles.btnPrimary}>
             Sign in
           </button>
