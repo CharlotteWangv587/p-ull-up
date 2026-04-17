@@ -1,0 +1,116 @@
+/* Purple-tint page — matches event-details and profile pages */
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8f1ff 0%, #f4f4f9 65%);
+  color: var(--text-dark);
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 24px 80px 24px;
+}
+
+/* Page heading */
+.heading {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #1f2937;
+  margin-bottom: 6px;
+}
+
+.heading span {
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subHeading {
+  font-size: 15px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 36px;
+}
+
+/* Divider between heading and grid */
+.divider {
+  height: 1px;
+  background: rgba(151, 51, 238, 0.14);
+  margin-bottom: 36px;
+}
+
+/* Event grid — same pattern as dashboard / events page */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* Empty state */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  opacity: 0.35;
+}
+
+.emptyTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.emptyText {
+  font-size: 14px;
+  font-weight: 500;
+  color: #9ca3af;
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+.emptyLink {
+  margin-top: 8px;
+  padding: 11px 22px;
+  border-radius: 999px;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-block;
+  box-shadow: 0 8px 20px rgba(151, 51, 238, 0.22);
+  transition: opacity 0.16s ease;
+}
+
+.emptyLink:hover {
+  opacity: 0.88;
+}
+
+/* Sort label */
+.sortBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.count {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+@media (max-width: 540px) {
+  .wrap {
+    padding: 32px 16px 60px 16px;
+  }
+}

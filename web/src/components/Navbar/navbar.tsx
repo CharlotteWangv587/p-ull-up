@@ -5,15 +5,16 @@ import { ReactNode } from 'react';
 type NavbarProps = {
   showAuth?: boolean;
   rightContent?: ReactNode;
+  logoHref?: string;
 };
 
-export default function Navbar({ showAuth = true, rightContent }: NavbarProps) {
+export default function Navbar({ showAuth = true, rightContent, logoHref = "/personalized-dashboard" }: NavbarProps) {
   return (
     <nav className={styles.navbar}>
 
       {/* LEFT GROUP: Logo and Search Bar tied together */}
       <div className={styles.navLeft}>
-        <Link href="/" className={styles.logo} aria-label="Go to home page">
+        <Link href={logoHref} className={styles.logo} aria-label="Go to home page">
           p-ull up
         </Link>
         <div className={styles.searchContainer}>

@@ -61,7 +61,7 @@ export default function PublicDashboardPage() {
       {/* 1. NAVIGATION BAR 
           Layout: Logo + Search (Left) | Login + Sign Up (Right)
       */}
-      <Navbar />
+      <Navbar logoHref="/login" />
 
       {/* 2. HERO SECTION 
           Matches the 'Wavy' design and Title/Tagline from your sketch.
