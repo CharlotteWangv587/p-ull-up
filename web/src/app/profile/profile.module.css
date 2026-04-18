@@ -169,6 +169,7 @@
   display: grid;
   place-items: center;
   padding: 38px 20px 60px;
+  gap: 24px;
 }
 
 .card {
@@ -399,6 +400,106 @@
 .saveButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* ── Notification Settings section ── */
+
+.sectionHint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  margin-top: -12px;
+}
+
+.notifList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+
+.notifRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f3eeff;
+}
+
+.notifRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.notifText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.notifLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.notifDesc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ── Toggle switch ── */
+.toggle {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.toggleInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleSlider {
+  position: absolute;
+  inset: 0;
+  background: #e5e7eb;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+
+.toggleSlider::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  transition: transform 0.2s ease;
+}
+
+.toggleInput:checked + .toggleSlider {
+  background: linear-gradient(90deg, #da22ff, #9733ee);
+}
+
+.toggleInput:checked + .toggleSlider::after {
+  transform: translateX(20px);
+}
+
+.toggleInput:focus-visible + .toggleSlider {
+  outline: 2px solid #9733ee;
+  outline-offset: 2px;
 }
 
 @media (max-width: 800px) {

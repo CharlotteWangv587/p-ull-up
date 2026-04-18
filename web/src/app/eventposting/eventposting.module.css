@@ -7,6 +7,16 @@
   gap: 40px;          /* ← space between Navbar and card */
 }
 
+.layout {
+  width: 100%;
+  max-width: 1080px;
+  padding: 0 18px 60px 18px;
+  display: grid;
+  grid-template-columns: 560px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
 .card {
   background: #ffffff;
   border-radius: 12px;
@@ -20,6 +30,40 @@
 
 .card:hover {
   transform: translateY(-5px);  /* ← exact same as eventCard:hover */
+}
+
+.previewPane {
+  position: sticky;
+  top: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.previewLabel {
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding-left: 4px;
+}
+
+.tagsPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+@media (max-width: 980px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .previewPane {
+    position: static;
+  }
 }
 
 .logoArea {

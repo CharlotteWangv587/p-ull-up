@@ -3,16 +3,57 @@
 import Link from "next/link";
 import styles from "./dashboard.module.css";
 import Navbar from '@/components/Navbar/navbar';
+import EventCard from "@/components/EventCard/event-card";
 
 export default function PublicDashboardPage() {
   /** * MOCK DATA: These represent real events that will eventually 
    * come from your Supabase database.
    */
   const mockEvents = [
-    { id: 1, title: "Coachella Carpool", location: "Indio, CA" },
-    { id: 2, title: "LA Philharmonic Group", location: "Walt Disney Hall" },
-    { id: 3, title: "Beach Clean-up Crew", location: "Santa Monica" },
-    { id: 4, title: "Techstars Mixer", location: "DTLA" },
+    {
+      id: 1,
+      title: "Afrofusion",
+      subTitle: "Dom's Lounge",
+      tags: ["party", "on campus", "pomona","afrobeats"],
+      dateText: "Sat, Apr 11",
+      timeText: "11:00 PM–1:00 AM",
+      interestedCount: 47,
+      goingCount: 76,
+      href: "/events/1",
+    },
+    {
+      id: 2,
+      title: "Nochella",
+      subTitle: "Walker Beach",
+      tags: ["music", "food", "outdoors", "vendors","concert", "on campus", "tattoos", "flea market"],
+      dateText: "Saturday, Apr 11",
+      timeText: "3:00 PM - 10:00 PM",
+      interestedCount: 269,
+      goingCount: 113,
+      href: "/events/2",
+    },
+    {
+      id: 3,
+      title: "Beginner Daze 5C Surf Club x POCO",
+      subTitle: "Santa Monica",
+      tags: ["surfing", "outdoors", "off campus"],
+      dateText: "Sunday, Apr 19",
+      timeText: "9:00 AM - 4:00 PM",
+      interestedCount: 25,
+      goingCount: 14,
+      href: "/events/3",
+    },
+    {
+      id: 4,
+      title: "Techstars Mixer",
+      subTitle: "DTLA",
+      tags: ["networking", "startup"],
+      dateText: "Thu, Apr 24",
+      timeText: "6:00 PM",
+      interestedCount: 31,
+      goingCount: 18,
+      href: "/events/4",
+    },
   ];
 
   return (
@@ -27,10 +68,9 @@ export default function PublicDashboardPage() {
       */}
       <header className={styles.hero}>
         <h1>Find your group. Attend the event.</h1>
-        <p className={styles.tagline}>p-ull up: Social Coordination for Off-Campus Events</p>
+        <p className={styles.tagline}>p-ull up: discover functions happening all over the 5Cs</p>
         <p className={styles.description}>
-          Don't miss out just because you lack a group. Match with nearby event-goers, 
-          organize committed attendance, and coordinate safe carpooling.
+          where you'll go to find what you're doing when you're off student mode
         </p>
       </header>
 
@@ -46,13 +86,18 @@ export default function PublicDashboardPage() {
         <div className={styles.eventGrid}>
           {/* We 'map' over the mockEvents array to create a card for each item */}
           {mockEvents.map(event => (
-            <div key={event.id} className={styles.eventCard}>
-              <div className={styles.eventImagePlaceholder}>Event Image</div>
-              <h3>{event.title}</h3>
-              <p>{event.location}</p>
-              {/* The styled action button for joining a group */}
-              <button className={styles.viewGroupBtn}>View Group</button>
-            </div>
+            <EventCard
+              key={event.id}
+              title={event.title}
+              subTitle={event.subTitle}
+              tags={event.tags.map((t) => ({ id: `${event.id}-${t}`, label: `#${t}` }))}
+              dateText={event.dateText}
+              timeText={event.timeText}
+              interestedCount={event.interestedCount}
+              goingCount={event.goingCount}
+              ctaLabel="View Event"
+              href={event.href}
+            />
           ))}
         </div>
       </section>

@@ -1,0 +1,150 @@
+/* ── Root ── */
+.root {
+  display: grid;
+  gap: 10px;
+}
+
+/* ── Preset toggleable chips row ── */
+.presetRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── "or add your own" divider ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(151, 51, 238, 0.14);
+}
+
+.dividerLabel {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #9ca3af;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* ── Custom tag input area ── */
+.customBox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid rgba(151, 51, 238, 0.22);
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: text;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.customBox:focus-within {
+  border-color: #9733ee;
+  box-shadow: 0 0 0 3px rgba(151, 51, 238, 0.1);
+}
+
+/* ── Individual custom tag chip ── */
+.customChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 8px 0 10px;
+  border-radius: 999px;
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(151, 51, 238, 0.25);
+}
+
+.chipLabel {
+  line-height: 1;
+}
+
+.chipRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 900;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: background 0.12s ease;
+  flex-shrink: 0;
+}
+
+.chipRemove:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Inline text input ── */
+.customInput {
+  flex: 1;
+  min-width: 140px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1f2937;
+  font-family: inherit;
+  padding: 0;
+  line-height: 1;
+}
+
+.customInput::placeholder {
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+/* ── Helper text ── */
+.hint {
+  font-size: 11.5px;
+  color: #9ca3af;
+  font-weight: 600;
+  margin: 0;
+}
+
+.hint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  font-size: 10.5px;
+  font-family: inherit;
+  font-weight: 700;
+  color: #374151;
+}
+
+/* ── Validation error ── */
+.error {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #ef4444;
+  margin: 0;
+}

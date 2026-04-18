@@ -1,0 +1,57 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(151, 51, 238, 0.28);
+  background: hsl(0, 0%, 100%);
+  color: #5b2e9f;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, color 0.16s ease;
+  box-shadow: 0 2px 10px rgba(151, 51, 238, 0.1);
+}
+
+.tagSm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 2px 8px rgba(151, 51, 238, 0.09);
+}
+
+.tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(151, 51, 238, 0.18);
+}
+
+.tag:active {
+  transform: translateY(0px);
+  box-shadow: 0 6px 14px rgba(151, 51, 238, 0.14);
+}
+
+.tagSelected {
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 12px 22px rgba(151, 51, 238, 0.28);
+}
+
+.tagDisabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tagDisabled:hover {
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}

@@ -1,8 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import styles from "./profile.module.css";
+import Navbar from "@/components/Navbar/navbar";
+import NotificationButton from "@/components/NotificationButton/notification-button";
+import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
 
 type ProfileValues = {
   name: string;
@@ -13,39 +15,65 @@ type ProfileValues = {
 };
 
 const DEFAULT_VALUES: ProfileValues = {
-  name: "Franklyn Forson",
-  email: "franklyn@example.com",
-  location: "Charlotte, NC",
+  name: "Vika Prokopenko",
+  email: "vika@example.com",
+  location: "Claremont, CA",
   instagram: "@pullupcommunity",
   password: "",
 };
 
 const DRAFT_KEY = "pullup-profile-draft";
+const PREFS_KEY = "pullup-notif-prefs";
 
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  );
-}
+type NotifPrefs = {
+  commentReplies: boolean;
+  myEventLiked: boolean;
+  myEventGoing: boolean;
+  likedEventComment: boolean;
+  attendingEventComment: boolean;
+};
+
+const DEFAULT_PREFS: NotifPrefs = {
+  commentReplies: true,
+  myEventLiked: true,
+  myEventGoing: true,
+  likedEventComment: false,
+  attendingEventComment: false,
+};
+
+const NOTIF_SETTINGS: { key: keyof NotifPrefs; label: string; description: string }[] = [
+  {
+    key: "commentReplies",
+    label: "Replies to my comments",
+    description: "Get notified when someone responds to a comment you left on an event.",
+  },
+  {
+    key: "myEventLiked",
+    label: "Likes on my events",
+    description: "Get notified when someone likes an event you created.",
+  },
+  {
+    key: "myEventGoing",
+    label: "RSVPs on my events",
+    description: "Get notified when someone marks themselves as going to an event you created.",
+  },
+  {
+    key: "likedEventComment",
+    label: "Comments on events I liked",
+    description: "Get notified when a new comment is posted on an event you've liked.",
+  },
+  {
+    key: "attendingEventComment",
+    label: "Comments on events I'm attending",
+    description: "Get notified when a new comment is posted on an event you're attending.",
+  },
+];
 
 function UserIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
       <circle cx="12" cy="7" r="4" />
-    </svg>
-  );
-}
-
-function CloudIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M20 17.58A5 5 0 0 0 18 8h-1.26A8 8 0 1 0 4 16.25" />
-      <path d="m8 16 4 4 4-4" />
-      <path d="M12 12v8" />
     </svg>
   );
 }
@@ -90,13 +118,13 @@ function EyeOffIcon() {
 
 export default function ProfilePage() {
   const [values, setValues] = useState<ProfileValues>(DEFAULT_VALUES);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [avatarPreview, setAvatarPreview] = useState<string>("");
   const [status, setStatus] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [notifPrefs, setNotifPrefs] = useState<NotifPrefs>(DEFAULT_PREFS);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -104,12 +132,20 @@ export default function ProfilePage() {
     if (!rawDraft) return;
     try {
       const parsed = JSON.parse(rawDraft) as Partial<ProfileValues>;
-      setValues((prev) => ({
-        ...prev,
-        ...parsed,
-      }));
+      setValues((prev) => ({ ...prev, ...parsed }));
     } catch {
       localStorage.removeItem(DRAFT_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    const raw = localStorage.getItem(PREFS_KEY);
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw) as Partial<NotifPrefs>;
+      setNotifPrefs((prev) => ({ ...prev, ...parsed }));
+    } catch {
+      localStorage.removeItem(PREFS_KEY);
     }
   }, []);
 
@@ -119,6 +155,14 @@ export default function ProfilePage() {
     }, 400);
     return () => window.clearTimeout(timeout);
   }, [values]);
+
+  useEffect(() => {
+    localStorage.setItem(PREFS_KEY, JSON.stringify(notifPrefs));
+  }, [notifPrefs]);
+
+  const togglePref = useCallback((key: keyof NotifPrefs) => {
+    setNotifPrefs((prev) => ({ ...prev, [key]: !prev[key] }));
+  }, []);
 
   const formReady = useMemo(() => {
     return values.name.trim().length > 1 && values.email.includes("@");
@@ -170,49 +214,18 @@ export default function ProfilePage() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.navbar}>
-        <div className={styles.navLeft}>
-          <Link href="/" className={styles.logo} aria-label="Back to home">
-            p-ull up
-          </Link>
-          <div className={styles.searchWrapper}>
-            <input className={styles.searchInput} placeholder="Search events, groups..." aria-label="Search" />
-            <button type="button" className={styles.searchButton} aria-label="Search">
-              <SearchIcon />
-            </button>
-          </div>
-        </div>
-        <div className={styles.navActions}>
-          <button type="button" className={styles.circleIcon} aria-label="Cloud sync">
-            <CloudIcon />
-          </button>
-          <div className={styles.menuWrap}>
-            <button
-              type="button"
-              className={styles.circleIcon}
-              onClick={() => setMenuOpen((prev) => !prev)}
-              aria-haspopup="menu"
-              aria-expanded={menuOpen}
-              aria-label="Open profile menu"
-            >
-              <UserIcon />
-            </button>
-            {menuOpen && (
-              <div className={styles.dropdown} role="menu">
-                <button type="button" role="menuitem">Edit profile</button>
-                <button type="button" role="menuitem">Liked Events</button>
-                <button type="button" role="menuitem">Attending Events</button>
-                <Link href="/" role="menuitem" onClick={() => setMenuOpen(false)}>
-                  Sign out
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
+      <Navbar
+        showAuth={false}
+        rightContent={
+          <>
+            <NotificationButton />
+            <ProfileDropdown />
+          </>
+        }
+      />
 
       <main className={styles.main}>
-        <section className={styles.card}>
+        <section className={styles.card} id="personal-info">
           <p className={styles.sectionLabel}>Personal Information</p>
           <form className={styles.form} onSubmit={onSubmit}>
             <div className={styles.profileRow}>
@@ -292,6 +305,34 @@ export default function ProfilePage() {
               </button>
             </div>
           </form>
+        </section>
+
+        {/* ── Notification Settings ── */}
+        <section className={styles.card} id="notification-settings">
+          <p className={styles.sectionLabel}>Notification Settings</p>
+          <p className={styles.sectionHint}>
+            Choose what you&apos;d like to be notified about. Changes save automatically.
+          </p>
+
+          <ul className={styles.notifList}>
+            {NOTIF_SETTINGS.map(({ key, label, description }) => (
+              <li key={key} className={styles.notifRow}>
+                <div className={styles.notifText}>
+                  <span className={styles.notifLabel}>{label}</span>
+                  <span className={styles.notifDesc}>{description}</span>
+                </div>
+                <label className={styles.toggle} aria-label={label}>
+                  <input
+                    type="checkbox"
+                    className={styles.toggleInput}
+                    checked={notifPrefs[key]}
+                    onChange={() => togglePref(key)}
+                  />
+                  <span className={styles.toggleSlider} />
+                </label>
+              </li>
+            ))}
+          </ul>
         </section>
       </main>
     </div>

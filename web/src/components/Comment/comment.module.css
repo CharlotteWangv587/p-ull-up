@@ -1,0 +1,267 @@
+/* ── Comment root ── */
+.root {
+  padding: 16px 0;
+  border-top: 1px solid rgba(151, 51, 238, 0.12);
+}
+
+.root:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* Replies: left indent + subtle line */
+.reply {
+  margin-top: 10px;
+  padding-left: 16px;
+  border-left: 2px solid rgba(151, 51, 238, 0.18);
+  border-top: none;
+  padding-top: 0;
+}
+
+.reply:first-child {
+  border-top: none;
+}
+
+/* ── Header row ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.avatarWrap {
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatarPlaceholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #da22ff 0%, #9733ee 100%);
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.avatarAnon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.name {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.school {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.time {
+  font-size: 11.5px;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+/* ── DM button ── */
+.dmBtn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(151, 51, 238, 0.22);
+  background: #ffffff;
+  color: #9733ee;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dmBtn:hover {
+  background: rgba(151, 51, 238, 0.08);
+  box-shadow: 0 4px 12px rgba(151, 51, 238, 0.18);
+}
+
+/* ── Body ── */
+.body {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #374151;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+}
+
+/* ── Action row ── */
+.actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.actionBtn {
+  background: none;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #9733ee;
+  cursor: pointer;
+  padding: 0;
+  letter-spacing: 0.01em;
+}
+
+.actionBtn:hover {
+  opacity: 0.75;
+}
+
+/* ── Reply box ── */
+.replyBox {
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.replyInput {
+  width: 100%;
+  border: 1px solid rgba(151, 51, 238, 0.22);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  resize: none;
+  outline: none;
+  background: #ffffff;
+  color: #1f2937;
+  font-family: inherit;
+}
+
+.replyInput:focus {
+  border-color: #9733ee;
+  box-shadow: 0 0 0 3px rgba(151, 51, 238, 0.1);
+}
+
+.replyFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.anonToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #6b7280;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sendBtn {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.sendBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sendBtn:not(:disabled):hover {
+  opacity: 0.9;
+}
+
+/* ── Delete button ── */
+.deleteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #9ca3af;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: color 0.15s ease;
+}
+
+.deleteBtn:hover {
+  color: #ef4444;
+}
+
+/* ── Delete confirm inline ── */
+.deleteConfirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #ef4444;
+}
+
+.deleteConfirmYes {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #ef4444;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.deleteConfirmNo {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #6b7280;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ── Nested replies container ── */
+.repliesWrap {
+  margin-top: 4px;
+  padding-left: 8px;
+}

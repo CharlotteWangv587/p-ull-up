@@ -1,0 +1,246 @@
+.page {
+  min-height: 100vh;
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 18px 80px;
+  display: grid;
+  gap: 0;
+}
+
+/* ── Page header ── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 30px;
+  letter-spacing: -0.03em;
+  font-weight: 900;
+  color: #1f2937;
+  margin: 0 0 4px;
+}
+
+.queryHighlight {
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.resultCount {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.createLink {
+  flex-shrink: 0;
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 13.5px;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(151, 51, 238, 0.22);
+  transition: opacity 0.15s ease;
+}
+
+.createLink:hover {
+  opacity: 0.9;
+}
+
+/* ── Toolbar row (dropdowns + clear) ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.toolbarLabel {
+  font-size: 12px;
+  font-weight: 800;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Shared pill dropdown — used for Date, Popularity, and Campus */
+.filterSelect {
+  height: 36px;
+  padding: 0 32px 0 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(151, 51, 238, 0.22);
+  background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%239ca3af'/%3E%3C/svg%3E") no-repeat right 12px center;
+  -webkit-appearance: none;
+  appearance: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: #6b7280;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.filterSelect:hover {
+  border-color: rgba(151, 51, 238, 0.45);
+}
+
+.filterSelect:focus {
+  border-color: #9733ee;
+  box-shadow: 0 0 0 3px rgba(151, 51, 238, 0.1);
+}
+
+/* Active state — a non-default option is selected */
+.filterSelectActive {
+  border-color: #9733ee;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%239733ee'/%3E%3C/svg%3E");
+  background-color: rgba(151, 51, 238, 0.06);
+  color: #5b2e9f;
+}
+
+.clearBtn {
+  background: none;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 999px;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #6b7280;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+
+.clearBtn:hover {
+  border-color: #9ca3af;
+  color: #374151;
+}
+
+/* ── "When" date filter pills ── */
+.whenRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.whenPills {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+  flex: 1;
+}
+
+.whenPills::-webkit-scrollbar {
+  display: none;
+}
+
+.whenPill {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 13px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(151, 51, 238, 0.22);
+  background: #ffffff;
+  color: #5b2e9f;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+  letter-spacing: 0.01em;
+}
+
+.whenPill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(151, 51, 238, 0.15);
+}
+
+.whenPillActive {
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(151, 51, 238, 0.28);
+}
+
+.whenPillActive:hover {
+  box-shadow: 0 10px 22px rgba(151, 51, 238, 0.35);
+}
+
+/* ── Results grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+/* ── Empty state ── */
+.empty {
+  padding: 60px 0;
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #374151;
+  margin: 0 0 8px;
+}
+
+.emptyHint {
+  font-size: 14px;
+  color: #9ca3af;
+  font-weight: 600;
+  margin: 0;
+}
+
+.emptyReset {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #9733ee;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .whenRow {
+    flex-wrap: nowrap;
+  }
+
+  .toolbarLabel {
+    display: none;
+  }
+}

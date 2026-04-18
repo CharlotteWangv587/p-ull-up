@@ -1,0 +1,182 @@
+:root {
+  --gradient-start: #da22ff;
+  --gradient-end: #9733ee;
+}
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8f1ff 0%, #f4f4f9 65%);
+  color: #1f2937;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Page header ── */
+.pageHeader {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px 40px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.backRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #9733ee;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.titleBlock {
+  margin-top: 10px;
+}
+
+.pageTitle {
+  font-size: 1.85rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1f2937;
+  margin: 0 0 4px;
+}
+
+.pageCount {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.headerAction {
+  margin-top: 6px;
+}
+
+.postBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.postBtn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(151, 51, 238, 0.25);
+}
+
+/* ── Events grid ── */
+.section {
+  max-width: 1100px;
+  margin: 28px auto 0;
+  padding: 0 40px 80px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+/* ── Editable card wrapper ── */
+.cardWrap {
+  position: relative;
+}
+
+.editBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #eadcfb;
+  color: #9733ee;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(22, 15, 40, 0.12);
+  transition: background 0.14s ease, transform 0.14s ease;
+}
+
+.editBtn:hover {
+  background: #f3e8ff;
+  transform: scale(1.1);
+}
+
+/* ── Empty state ── */
+.empty {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 72px 20px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 2.5rem;
+  opacity: 0.35;
+}
+
+.emptyMsg {
+  font-size: 15px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.emptyAction {
+  margin-top: 4px;
+  display: inline-flex;
+  padding: 10px 22px;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.emptyAction:hover {
+  opacity: 0.88;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .pageHeader,
+  .section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .pageTitle {
+    font-size: 1.5rem;
+  }
+}
