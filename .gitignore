@@ -1,3 +1,6 @@
 
 # local secrets
 web/.env.local
+
+# stale build cache / accidental Next.js output outside web/.next/
+web/Documents/
