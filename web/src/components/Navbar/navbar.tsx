@@ -4,13 +4,12 @@ import Link from "next/link";
 import { ReactNode, useState } from "react";
 import styles from "./navbar.module.css";
 
-type SearchCategory = "keyword" | "event" | "campus" | "tag";
+type SearchCategory = "keyword" | "event" | "campus";
 
 const SEARCH_CATEGORIES: { value: SearchCategory; label: string; placeholder: string }[] = [
-  { value: "keyword", label: "Keyword", placeholder: "Search by keyword..." },
-  { value: "event",   label: "Event",   placeholder: "Search events..."     },
-  { value: "campus",  label: "Campus",  placeholder: "e.g. Pomona, CMC..."  },
-  { value: "tag",     label: "Tag",     placeholder: "e.g. #party, #music..." },
+  { value: "keyword", label: "Keyword", placeholder: "Search events, tags, and more…" },
+  { value: "event",   label: "Event",   placeholder: "Search by event name…"          },
+  { value: "campus",  label: "Campus",  placeholder: "e.g. Pomona, CMC…"              },
 ];
 
 type NavbarProps = {
