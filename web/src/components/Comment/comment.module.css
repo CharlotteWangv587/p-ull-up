@@ -208,6 +208,58 @@
   opacity: 0.9;
 }
 
+/* ── Delete button ── */
+.deleteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #9ca3af;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: color 0.15s ease;
+}
+
+.deleteBtn:hover {
+  color: #ef4444;
+}
+
+/* ── Delete confirm inline ── */
+.deleteConfirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #ef4444;
+}
+
+.deleteConfirmYes {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #ef4444;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.deleteConfirmNo {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #6b7280;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 /* ── Nested replies container ── */
 .repliesWrap {
   margin-top: 4px;

@@ -18,9 +18,21 @@ export type EventDetailsData = {
   details: string;
   interestedCount?: number;
   goingCount?: number;
+  /** The user ID of whoever created this event (maps to events.created_by) */
+  creatorId?: string;
 };
 
-export default function EventDetails({ event }: { event: EventDetailsData }) {
+type EventDetailsProps = {
+  event: EventDetailsData;
+  /** The currently logged-in user's ID — pass from server component or auth context */
+  currentUserId?: string;
+  /** True when the current user is a backend admin */
+  isAdmin?: boolean;
+  /** Called when a comment is deleted — wire to DELETE /api/comments/:id */
+  onDeleteComment?: (commentId: string) => Promise<void>;
+};
+
+export default function EventDetails({ event, currentUserId, isAdmin, onDeleteComment }: EventDetailsProps) {
   const [rsvp, setRsvp] = useState<"interested" | "going" | null>(null);
 
   const counts = useMemo(() => {
@@ -87,7 +99,13 @@ export default function EventDetails({ event }: { event: EventDetailsData }) {
             {/* 5. COMMENTS */}
             <section className={styles.block} id="comments" aria-label="Comments">
               <h2 className={styles.blockLabel}>Comments</h2>
-              <CommentSection eventId={event.id} />
+              <CommentSection
+                eventId={event.id}
+                currentUserId={currentUserId}
+                eventCreatorId={event.creatorId}
+                isAdmin={isAdmin}
+                onDelete={onDeleteComment}
+              />
             </section>
           </div>
 

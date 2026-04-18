@@ -27,6 +27,13 @@ type CommentProps = {
   depth?: number; // 0 = top-level, 1 = reply (we only go 1 level deep)
   onReply?: (parentId: string, body: string, anonymous: boolean) => void;
   onDm?: (author: CommentAuthor) => void;
+  onDelete?: (commentId: string) => void;
+  /** The currently logged-in user's ID (undefined = not signed in) */
+  currentUserId?: string;
+  /** The user ID of whoever created the event this comment belongs to */
+  eventCreatorId?: string;
+  /** True when the current user is a backend admin */
+  isAdmin?: boolean;
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -69,8 +76,16 @@ function AnonAvatar({ size = 34 }: { size?: number }) {
 function PaperPlaneIcon() {
   return (
     <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+      <path d="M2 21 23 12 2 3v7l15 2-15 2z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true">
       <path
-        d="M2 21 23 12 2 3v7l15 2-15 2z"
+        d="M9 3h6l1 1h4v2H4V4h4l1-1ZM5 7h14l-1 13H6L5 7Zm4 2v9h1V9H9Zm5 0v9h1V9h-1Z"
         fill="currentColor"
       />
     </svg>
@@ -79,14 +94,35 @@ function PaperPlaneIcon() {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function Comment({ comment, depth = 0, onReply, onDm }: CommentProps) {
+export default function Comment({
+  comment,
+  depth = 0,
+  onReply,
+  onDm,
+  onDelete,
+  currentUserId,
+  eventCreatorId,
+  isAdmin,
+}: CommentProps) {
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [anonymous, setAnonymous] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const isAnon = comment.author === null;
   const displayName = isAnon ? "Anonymous" : comment.author!.name;
   const school = !isAnon && comment.author!.school ? comment.author!.school : null;
+
+  // Who can delete this comment?
+  //  • The comment's own author
+  //  • The event creator (moderating their event)
+  //  • A backend admin
+  const canDelete =
+    !!onDelete &&
+    !!currentUserId &&
+    (isAdmin ||
+      currentUserId === eventCreatorId ||
+      (!isAnon && comment.author!.id === currentUserId));
 
   function handleSendReply() {
     const body = replyText.trim();
@@ -95,6 +131,15 @@ export default function Comment({ comment, depth = 0, onReply, onDm }: CommentPr
     setReplyText("");
     setShowReplyBox(false);
     setAnonymous(false);
+  }
+
+  function handleDeleteClick() {
+    if (!confirmDelete) {
+      setConfirmDelete(true);
+      return;
+    }
+    onDelete!(comment.id);
+    setConfirmDelete(false);
   }
 
   return (
@@ -152,6 +197,38 @@ export default function Comment({ comment, depth = 0, onReply, onDm }: CommentPr
             {showReplyBox ? "Cancel" : "Reply"}
           </button>
         ) : null}
+
+        {canDelete ? (
+          confirmDelete ? (
+            <span className={styles.deleteConfirm}>
+              Delete?{" "}
+              <button
+                type="button"
+                className={styles.deleteConfirmYes}
+                onClick={handleDeleteClick}
+              >
+                Yes
+              </button>{" "}
+              <button
+                type="button"
+                className={styles.deleteConfirmNo}
+                onClick={() => setConfirmDelete(false)}
+              >
+                No
+              </button>
+            </span>
+          ) : (
+            <button
+              type="button"
+              className={styles.deleteBtn}
+              onClick={handleDeleteClick}
+              aria-label="Delete comment"
+            >
+              <TrashIcon />
+              Delete
+            </button>
+          )
+        ) : null}
       </div>
 
       {/* ── Inline reply box ── */}
@@ -189,7 +266,16 @@ export default function Comment({ comment, depth = 0, onReply, onDm }: CommentPr
       {comment.replies?.length ? (
         <div className={styles.repliesWrap}>
           {comment.replies.map((r) => (
-            <Comment key={r.id} comment={r} depth={1} onDm={onDm} />
+            <Comment
+              key={r.id}
+              comment={r}
+              depth={1}
+              onDm={onDm}
+              onDelete={onDelete}
+              currentUserId={currentUserId}
+              eventCreatorId={eventCreatorId}
+              isAdmin={isAdmin}
+            />
           ))}
         </div>
       ) : null}

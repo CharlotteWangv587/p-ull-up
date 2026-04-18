@@ -62,6 +62,25 @@ export default async function EventDetailsPage({
 }) {
   const { id } = await params;
   const event = mockEvents.find((e) => e.id === id) ?? mockEvents[0];
-  return <EventDetails event={event} />;
+
+  // ── TODO: replace with real session when auth is wired ───────────────────
+  // e.g. const session = await getServerSession(); currentUserId = session.user.id
+  // "u1" matches the first seed comment author so the Delete button is visible
+  // during development. Remove / replace before shipping.
+  const currentUserId = "u1";
+
+  return (
+    <EventDetails
+      event={event}
+      currentUserId={currentUserId}
+      onDeleteComment={async (commentId) => {
+        "use server";
+        // TODO: swap for a real fetch() call with the user's Bearer token once
+        // auth is wired. The API route is already live at
+        // DELETE /api/comments/:commentId
+        console.log("[mock] delete comment", commentId);
+      }}
+    />
+  );
 }
 

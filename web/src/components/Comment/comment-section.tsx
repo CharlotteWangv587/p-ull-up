@@ -10,10 +10,21 @@ import styles from "./comment-section.module.css";
 export type CommentSectionProps = {
   eventId: string;
   initialComments?: CommentData[];
+  /** The currently logged-in user's ID (undefined = not signed in) */
+  currentUserId?: string;
+  /** The user ID of whoever created this event */
+  eventCreatorId?: string;
+  /** True when the current user is a backend admin */
+  isAdmin?: boolean;
   /** Called when a top-level comment is submitted. Replace with Supabase insert. */
   onPost?: (eventId: string, body: string, anonymous: boolean) => Promise<void>;
   /** Called when a reply is submitted. Replace with Supabase insert. */
   onReply?: (parentId: string, body: string, anonymous: boolean) => Promise<void>;
+  /**
+   * Called when a comment is deleted.
+   * Wire this up to DELETE /api/comments/:commentId with the user's Bearer token.
+   */
+  onDelete?: (commentId: string) => Promise<void>;
   /** Called when the DM button is tapped. Replace with routing to DM thread. */
   onDm?: (author: CommentAuthor) => void;
 };
@@ -56,8 +67,12 @@ const SEED: CommentData[] = [
 export default function CommentSection({
   eventId,
   initialComments,
+  currentUserId,
+  eventCreatorId,
+  isAdmin,
   onPost,
   onReply,
+  onDelete,
   onDm,
 }: CommentSectionProps) {
   const [comments, setComments] = useState<CommentData[]>(
@@ -78,7 +93,7 @@ export default function CommentSection({
       // Optimistic local add (replaced by real data once backend returns it)
       const newComment: CommentData = {
         id: `local-${Date.now()}`,
-        author: anonymous ? null : { id: "me", name: "You" },
+        author: anonymous ? null : { id: currentUserId ?? "me", name: "You" },
         body: text,
         createdAt: "Just now",
         replies: [],
@@ -103,7 +118,9 @@ export default function CommentSection({
                 ...(c.replies ?? []),
                 {
                   id: `local-reply-${Date.now()}`,
-                  author: anon ? null : { id: "me", name: "You" },
+                  author: anon
+                    ? null
+                    : { id: currentUserId ?? "me", name: "You" },
                   body: replyBody,
                   createdAt: "Just now",
                 },
@@ -112,6 +129,29 @@ export default function CommentSection({
           : c
       )
     );
+  }
+
+  async function handleDelete(commentId: string) {
+    // Optimistic: remove from state immediately so the UI feels instant.
+    setComments((prev) => {
+      // Try removing a top-level comment first.
+      const withoutTop = prev.filter((c) => c.id !== commentId);
+      if (withoutTop.length !== prev.length) return withoutTop;
+
+      // Otherwise remove from the replies of any top-level comment.
+      return prev.map((c) => ({
+        ...c,
+        replies: c.replies?.filter((r) => r.id !== commentId),
+      }));
+    });
+
+    // Then call the backend (fire-and-forget; you can add error recovery later).
+    try {
+      await onDelete?.(commentId);
+    } catch (err) {
+      console.error("Failed to delete comment", err);
+      // TODO: restore the comment in state and show a toast on failure
+    }
   }
 
   return (
@@ -157,6 +197,10 @@ export default function CommentSection({
               depth={0}
               onReply={handleReply}
               onDm={onDm}
+              onDelete={handleDelete}
+              currentUserId={currentUserId}
+              eventCreatorId={eventCreatorId}
+              isAdmin={isAdmin}
             />
           ))
         )}
