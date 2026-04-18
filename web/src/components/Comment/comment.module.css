@@ -265,3 +265,74 @@
   margin-top: 4px;
   padding-left: 8px;
 }
+
+/* ════════════════════════════════
+   DARK MODE
+   ════════════════════════════════ */
+
+:global(html.dark) .root {
+  border-top-color: rgba(151, 51, 238, 0.2);
+}
+
+:global(html.dark) .reply {
+  border-left-color: rgba(151, 51, 238, 0.25);
+}
+
+:global(html.dark) .name {
+  color: #f0f0f8;
+}
+
+:global(html.dark) .school {
+  color: rgba(200, 180, 255, 0.65);
+}
+
+:global(html.dark) .time {
+  color: rgba(200, 180, 255, 0.45);
+}
+
+:global(html.dark) .body {
+  color: rgba(230, 225, 255, 0.85);
+}
+
+:global(html.dark) .avatarAnon {
+  background: rgba(151, 51, 238, 0.2);
+  color: #c084fc;
+}
+
+:global(html.dark) .dmBtn {
+  background: rgba(151, 51, 238, 0.12);
+  border-color: rgba(151, 51, 238, 0.3);
+  color: #c084fc;
+}
+
+:global(html.dark) .dmBtn:hover {
+  background: rgba(151, 51, 238, 0.22);
+}
+
+:global(html.dark) .replyInput {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(151, 51, 238, 0.28);
+  color: #f0f0f8;
+}
+
+:global(html.dark) .replyInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+:global(html.dark) .replyInput:focus {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(218, 34, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(151, 51, 238, 0.12);
+}
+
+:global(html.dark) .anonToggle {
+  color: rgba(200, 180, 255, 0.65);
+}
+
+:global(html.dark) .deleteBtn {
+  color: rgba(200, 180, 255, 0.45);
+}
+
+:global(html.dark) .deleteConfirmNo {
+  color: rgba(200, 180, 255, 0.55);
+}

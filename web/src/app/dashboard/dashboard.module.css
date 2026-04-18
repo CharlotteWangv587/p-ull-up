@@ -9,7 +9,7 @@
   --gradient-end: #9733ee;   /* Deep Purple from the login background */
   --text-dark: #333333;      /* Standard dark grey for readability */
   --text-light: #ffffff;     /* Pure white for text on dark backgrounds */
-  --bg-light: #f4f4f9;       /* Soft off-white background to make cards pop */
+  --bg-light: #f5f2fb;       /* Soft off-white background to make cards pop */
 }
 
 /* SECTION: BASE LAYOUT
@@ -273,6 +273,25 @@
 /* SECTION 2: HERO AREA
   The large welcome section with the wavy bottom.
 */
+.heroWrap {
+  /* Fade the painted output (gradient blobs + text) into transparency at the
+     bottom so the page background bleeds through — no colour dependency. */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 72%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black 72%,
+    transparent 100%
+  );
+  /* Pull the next section up so it sits under the fade zone */
+  margin-bottom: -80px;
+}
+
 .hero {
   background: linear-gradient(135deg, var(--gradient-end) 0%, var(--gradient-start) 100%);
   color: white;
@@ -301,6 +320,8 @@
 */
 .eventsSection {
   padding: 50px;
+  position: relative;
+  z-index: 1; /* sit above the hero's fade overlap so links stay clickable */
 }
 
 .sectionHeader {
@@ -310,11 +331,24 @@
   margin-bottom: 30px;
 }
 
+.sectionHeader h2 {
+  font-size: 1.75rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text-dark);
+}
+
 .seeMore {
   text-decoration: none;
-  color: var(--text-dark);
-  font-size: 0.9rem;
-  font-weight: bold;
+  color: var(--gradient-end);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  transition: opacity 0.15s ease;
+}
+
+.seeMore:hover {
+  opacity: 0.75;
 }
 
 .eventGrid {
@@ -349,4 +383,90 @@
   font-size: 1.1rem;
   cursor: pointer;
   font-weight: bold;
+}
+
+/* ════════════════════════════════
+   DARK MODE
+   ════════════════════════════════ */
+
+:global(html.dark) .container {
+  background-color: #1a1825;
+  color: #e8e8f0;
+}
+
+:global(html.dark) .eventsSection {
+  background-color: transparent;
+}
+
+:global(html.dark) .sectionHeader h2 {
+  color: #e8e8f0;
+}
+
+:global(html.dark) .seeMore {
+  color: #c084fc;
+}
+
+:global(html.dark) .postCta {
+  background: linear-gradient(180deg, transparent 0%, rgba(151, 51, 238, 0.08) 100%);
+  border-top: 1px solid rgba(151, 51, 238, 0.15);
+}
+
+:global(html.dark) .postCta h3 {
+  color: #e8e8f0;
+}
+
+/* navbar styles defined in dashboard.module.css (duplicate) */
+:global(html.dark) .navbar {
+  background: rgba(26, 24, 37, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(151, 51, 238, 0.18);
+  box-shadow: none;
+}
+
+:global(html.dark) .searchWrapper {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(151, 51, 238, 0.25);
+}
+
+:global(html.dark) .searchInput {
+  color: #e8e8f0;
+}
+
+:global(html.dark) .searchCategory {
+  color: #c084fc;
+}
+
+:global(html.dark) .navLink {
+  color: rgba(232, 232, 240, 0.85);
+}
+
+:global(html.dark) .dropdown {
+  background: rgba(20, 18, 30, 0.95);
+  border-color: rgba(151, 51, 238, 0.25);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+:global(html.dark) .dropdown button,
+:global(html.dark) .dropdownLink {
+  color: #d8d8e8;
+}
+
+:global(html.dark) .dropdown button:hover,
+:global(html.dark) .dropdownLink:hover {
+  background: rgba(151, 51, 238, 0.18);
+  color: #d8b4fe;
+}
+
+:global(html.dark) .circleIcon {
+  background: rgba(151, 51, 238, 0.15);
+  border-color: rgba(151, 51, 238, 0.3);
+  color: #c084fc;
+}
+
+:global(html.dark) .iconActionBtn {
+  background: rgba(151, 51, 238, 0.15);
+  border-color: rgba(151, 51, 238, 0.3);
+  color: #c084fc;
 }

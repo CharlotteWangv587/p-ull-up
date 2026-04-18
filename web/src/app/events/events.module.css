@@ -42,3 +42,16 @@
   gap: 18px;
 }
 
+/* ════════════════════════════════
+   DARK MODE
+   ════════════════════════════════ */
+
+:global(html.dark) .page {
+  background: #1a1825;
+  color: #e8e8f0;
+}
+
+:global(html.dark) .title {
+  color: #e8e8f0;
+}
+

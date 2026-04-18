@@ -1,12 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
+  /* ── p-ull up brand ── */
   --gradient-start: #da22ff;
   --gradient-end: #9733ee;
   --text-dark: #333333;
   --text-light: #ffffff;
-  --bg-light: #f4f4f9;
+  --bg-light: #f5f2fb;
   --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+
+  /* ── shadcn / Tailwind color tokens (HSL, no wrapper) ── */
+  --background:           0 0% 100%;
+  --foreground:           270 50% 10%;
+  --primary:              271 83% 57%;   /* #9733ee */
+  --primary-foreground:   0 0% 100%;
+  --secondary:            271 20% 95%;
+  --secondary-foreground: 271 50% 30%;
+  --muted:                271 15% 94%;
+  --muted-foreground:     271 10% 46%;
+  --accent:               271 20% 94%;
+  --accent-foreground:    271 50% 30%;
+  --destructive:          0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border:               271 20% 88%;
+  --input:                271 20% 88%;
+  --ring:                 271 83% 57%;
+  --radius:               0.5rem;
 }
 
 html,
@@ -21,6 +44,13 @@ body {
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ── Dark mode body ── */
+html.dark body {
+  background: #1a1825;
+  color: #e8e8f0;
 }
 
 * {

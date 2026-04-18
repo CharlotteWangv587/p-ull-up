@@ -3,7 +3,7 @@
   --gradient-end: #9733ee;
   --text-dark: #333333;
   --text-light: #ffffff;
-  --bg-light: #f4f4f9;
+  --bg-light: #f5f2fb;
 }
 
 .navbar {
@@ -122,4 +122,50 @@
   border: none;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* ════════════════════════════════
+   DARK MODE
+   ════════════════════════════════ */
+
+:global(html.dark) .navbar {
+  background: rgba(26, 24, 37, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(151, 51, 238, 0.18);
+  box-shadow: none;
+}
+
+:global(html.dark) .searchWrapper {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(151, 51, 238, 0.25);
+}
+
+:global(html.dark) .searchWrapper:hover {
+  border-color: rgba(218, 34, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(151, 51, 238, 0.1);
+}
+
+:global(html.dark) .searchInput {
+  color: #e8e8f0;
+}
+
+:global(html.dark) .searchInput::placeholder {
+  color: rgba(232, 232, 240, 0.4);
+}
+
+:global(html.dark) .searchCategory {
+  color: #c084fc;
+}
+
+:global(html.dark) .divider {
+  background-color: rgba(151, 51, 238, 0.25);
+}
+
+:global(html.dark) .navLink {
+  color: rgba(232, 232, 240, 0.85);
+}
+
+:global(html.dark) .navLink:hover {
+  color: #d8b4fe;
 }

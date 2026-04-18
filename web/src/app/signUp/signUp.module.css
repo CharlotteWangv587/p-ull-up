@@ -1,70 +1,71 @@
 /**
- * Sign-up route styles. CSS Module (signUp.module.css) so class names are scoped
- * and don't clash with other pages. Used by signUp.tsx.
+ * Sign-up route styles — frosted glass card on animated gradient background.
  */
 
-/* Shared brand color variables (match dashboard.module.css) */
 :root {
   --gradient-start: #da22ff;
   --gradient-end: #9733ee;
-  --text-dark: #333333;
-  --text-light: #ffffff;
-  --bg-light: #f4f4f9;
 }
 
-/* Full-page gradient background and centering for the card */
-.wrapper {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: linear-gradient(180deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+/* "Back to home" link floating over the gradient */
+.backLink {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 10;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-/* White card containing the form */
+.backLink:hover {
+  color: #fff;
+}
+
+/* Frosted glass card */
 .card {
+  position: relative;
+  z-index: 10;
   width: 100%;
   max-width: 400px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  background: rgba(12, 10, 22, 0.6);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.08);
   padding: 40px 32px;
 }
 
-/* Card heading */
 .title {
   font-size: 24px;
   font-weight: 700;
-  color: var(--gradient-end);
+  color: #ffffff;
   text-align: center;
   margin-bottom: 28px;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-/* Form layout */
 .form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* Wrapper for each field so we can position the icon inside the input */
 .inputGroup {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* Icon inside input (left side); shared by Person, Envelope, Lock SVGs */
 .inputIcon {
   position: absolute;
   left: 14px;
   width: 20px;
   height: 20px;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.4);
   pointer-events: none;
 }
 
@@ -72,26 +73,25 @@
   width: 100%;
   height: 48px;
   padding: 0 16px 0 44px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
-  background: #f9fafb;
+  background: rgba(255, 255, 255, 0.08);
   font-size: 15px;
-  color: #111827;
+  color: #ffffff;
   font-family: inherit;
   transition: border-color 0.2s, background 0.2s;
 }
 
 .input::placeholder {
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.38);
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--gradient-end);
-  background: #fff;
+  border-color: rgba(218, 34, 255, 0.6);
+  background: rgba(255, 255, 255, 0.12);
 }
 
-/* SIGN UP (full width) then Sign up with Google */
 .buttons {
   display: flex;
   flex-direction: column;
@@ -107,11 +107,12 @@
   background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
   color: #fff;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.05em;
   cursor: pointer;
   font-family: inherit;
   transition: opacity 0.2s, transform 0.1s;
+  box-shadow: 0 6px 20px rgba(151, 51, 238, 0.4);
 }
 
 .btnPrimary:hover {
@@ -129,10 +130,10 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  background: #fff;
-  color: #2d3748;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -141,8 +142,8 @@
 }
 
 .btnGoogle:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .googleIcon {
@@ -153,35 +154,16 @@
   margin: 24px 0 0;
   text-align: center;
   font-size: 14px;
-  color: #2d3748;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .signInLink {
-  color: var(--gradient-end);
-  font-weight: 500;
+  color: #d8b4fe;
+  font-weight: 600;
   text-decoration: underline;
 }
 
 .signInLink:hover {
-  color: var(--gradient-start);
-}
-
-/* "Back to home" link on the gradient, outside the card */
-.backLink {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.backLink:hover {
   color: #fff;
 }
 

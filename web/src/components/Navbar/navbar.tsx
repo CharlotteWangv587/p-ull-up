@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ReactNode, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./navbar.module.css";
+import { ThemeToggle } from "@/components/ThemeToggle/theme-toggle";
 
 type SearchCategory = "keyword" | "event" | "campus";
 
@@ -83,13 +84,17 @@ export default function Navbar({ showAuth = true, rightContent }: NavbarProps) {
       {/* RIGHT GROUP */}
       {showAuth ? (
         <div className={styles.navRight}>
+          <ThemeToggle />
           <Link href="/login" className={styles.navLink}>Login</Link>
           <Link href="/signUp">
             <button className={styles.signUpBtn}>Create Account</button>
           </Link>
         </div>
       ) : (
-        <div className={styles.navRight}>{rightContent}</div>
+        <div className={styles.navRight}>
+          <ThemeToggle />
+          {rightContent}
+        </div>
       )}
 
     </nav>

@@ -4,6 +4,8 @@ import Link from "next/link";
 import styles from "./dashboard.module.css";
 import Navbar from '@/components/Navbar/navbar';
 import EventCard from "@/components/EventCard/event-card";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
+import { AnimatedHero } from "@/components/ui/animated-hero";
 
 export default function PublicDashboardPage() {
   /** * MOCK DATA: These represent real events that will eventually 
@@ -63,16 +65,12 @@ export default function PublicDashboardPage() {
       */}
       <Navbar />
 
-      {/* 2. HERO SECTION 
-          Matches the 'Wavy' design and Title/Tagline from your sketch.
-      */}
-      <header className={styles.hero}>
-        <h1>Find your group. Attend the event.</h1>
-        <p className={styles.tagline}>p-ull up: discover functions happening all over the 5Cs</p>
-        <p className={styles.description}>
-          where you'll go to find what you're doing when you're off student mode
-        </p>
-      </header>
+      {/* 2. HERO SECTION — animated gradient background + animated text */}
+      <div className={styles.heroWrap}>
+        <BackgroundGradientAnimation containerClassName="w-full">
+          <AnimatedHero />
+        </BackgroundGradientAnimation>
+      </div>
 
       {/* 3. EVENTS GRID 
           Displays the 4-column grid from your sketch.

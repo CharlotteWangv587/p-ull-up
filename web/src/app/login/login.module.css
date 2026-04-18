@@ -1,6 +1,5 @@
 /**
- * Login route styles. Uses Create Account (signUp) color scheme:
- * magenta-purple to deep purple gradient, purple accent.
+ * Login route styles — frosted glass card on animated gradient background.
  */
 
 :root {
@@ -9,21 +8,13 @@
   --title-purple: #9240f1;
 }
 
-.wrapper {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  background: linear-gradient(180deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-}
-
+/* "Back to home" link floating over the gradient */
 .backLink {
-  position: absolute;
+  position: fixed;
   top: 24px;
   left: 24px;
-  color: rgba(255, 255, 255, 0.9);
+  z-index: 10;
+  color: rgba(255, 255, 255, 0.85);
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
@@ -34,19 +25,25 @@
   color: #fff;
 }
 
+/* Frosted glass card */
 .card {
+  position: relative;
+  z-index: 10;
   width: 100%;
   max-width: 400px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  background: rgba(12, 10, 22, 0.6);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.08);
   padding: 40px 32px;
 }
 
 .title {
   font-size: 26px;
   font-weight: 700;
-  color: var(--title-purple);
+  color: #ffffff;
   text-align: center;
   margin: 0 0 28px;
   font-family: system-ui, -apple-system, sans-serif;
@@ -69,7 +66,7 @@
   left: 14px;
   width: 20px;
   height: 20px;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.4);
   pointer-events: none;
 }
 
@@ -77,23 +74,23 @@
   width: 100%;
   height: 48px;
   padding: 0 16px 0 44px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
-  background: #f9fafb;
+  background: rgba(255, 255, 255, 0.08);
   font-size: 15px;
-  color: #111827;
+  color: #ffffff;
   font-family: inherit;
   transition: border-color 0.2s, background 0.2s;
 }
 
 .input::placeholder {
-  color: #a0a6b1;
+  color: rgba(255, 255, 255, 0.38);
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--title-purple);
-  background: #fff;
+  border-color: rgba(218, 34, 255, 0.6);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .forgotRow {
@@ -104,12 +101,13 @@
 
 .forgotLink {
   font-size: 13px;
-  color: var(--gradient-end);
+  color: rgba(208, 167, 255, 0.85);
   font-weight: 500;
   text-decoration: none;
 }
 
 .forgotLink:hover {
+  color: #fff;
   text-decoration: underline;
 }
 
@@ -122,10 +120,11 @@
   background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
   color: #fff;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   font-family: inherit;
   transition: opacity 0.2s, transform 0.05s;
+  box-shadow: 0 6px 20px rgba(151, 51, 238, 0.4);
 }
 
 .btnPrimary:hover {
@@ -143,10 +142,10 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  background: #fff;
-  color: #2d3748;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
@@ -155,8 +154,8 @@
 }
 
 .btnGoogle:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .googleIcon {
@@ -167,17 +166,17 @@
   margin: 24px 0 0;
   text-align: center;
   font-size: 14px;
-  color: #2d3748;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .createLink {
-  color: var(--gradient-end);
-  font-weight: 500;
+  color: #d8b4fe;
+  font-weight: 600;
   text-decoration: underline;
 }
 
 .createLink:hover {
-  color: var(--title-purple);
+  color: #fff;
 }
 
 @media (max-width: 480px) {

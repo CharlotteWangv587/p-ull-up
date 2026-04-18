@@ -9,7 +9,7 @@
 
 .page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #f8f1ff 0%, #f4f4f9 65%);
+  background: linear-gradient(180deg, #f3edfd 0%, #f5f2fb 65%);
   color: var(--text-dark);
 }
 
@@ -533,5 +533,76 @@
   .saveButton {
     width: 100%;
   }
+}
+
+/* ════════════════════════════════
+   DARK MODE
+   ════════════════════════════════ */
+
+:global(html.dark) .page {
+  background: linear-gradient(180deg, #201830 0%, #1a1825 65%);
+  color: #e8e8f0;
+}
+
+:global(html.dark) .navbar {
+  background: rgba(26, 24, 37, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom-color: rgba(151, 51, 238, 0.18);
+}
+
+:global(html.dark) .card {
+  background: rgba(30, 26, 44, 0.9);
+  border: 1px solid rgba(151, 51, 238, 0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+:global(html.dark) .sectionTitle,
+:global(html.dark) .fieldLabel,
+:global(html.dark) .displayName,
+:global(html.dark) .username {
+  color: #f0f0f8;
+}
+
+:global(html.dark) .statLabel,
+:global(html.dark) .bioText {
+  color: rgba(200, 180, 255, 0.65);
+}
+
+:global(html.dark) .input,
+:global(html.dark) .textarea,
+:global(html.dark) .select {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(151, 51, 238, 0.25);
+  color: #f0f0f8;
+}
+
+:global(html.dark) .input::placeholder,
+:global(html.dark) .textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+:global(html.dark) .input:focus,
+:global(html.dark) .textarea:focus {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(218, 34, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(151, 51, 238, 0.12);
+}
+
+:global(html.dark) .divider {
+  border-color: rgba(151, 51, 238, 0.15);
+}
+
+:global(html.dark) .searchWrapper {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(151, 51, 238, 0.25);
+}
+
+:global(html.dark) .searchInput {
+  color: #e8e8f0;
+}
+
+:global(html.dark) .searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.3);
 }
 
