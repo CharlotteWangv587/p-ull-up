@@ -78,7 +78,7 @@ export default function PublicDashboardPage() {
       <section className={styles.eventsSection}>
         <div className={styles.sectionHeader}>
           <h2>Events near you...</h2>
-          <Link href="/events" className={styles.seeMore}>See more events... →</Link>
+          <Link href="/login" className={styles.seeMore}>See more events... →</Link>
         </div>
         
         <div className={styles.eventGrid}>
