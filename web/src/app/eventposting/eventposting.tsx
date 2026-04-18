@@ -4,7 +4,7 @@ import { useState } from 'react';
 import styles from './eventposting.module.css';
 import Navbar from '@/components/Navbar/navbar';
 import EventCard from '@/components/EventCard/event-card';
-import TagButton from '@/components/TagButton/tag-button';
+import TagInput from '@/components/TagInput/tag-input';
 
 export default function EventPosting() {
   const [tbdChecked, setTbdChecked] = useState(false);
@@ -14,14 +14,6 @@ export default function EventPosting() {
   const [eventTime, setEventTime] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  const availableTags = ['on campus', 'off campus', 'party', 'outdoors', 'indoors', 'departmental', 'club', 'organization', 'other', 'food'];
-
-  function toggleTag(tag: string) {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
-  }
 
   const dateText = tbdChecked
     ? 'Date/Time TBD'
@@ -115,16 +107,11 @@ export default function EventPosting() {
             {/* Tags */}
             <div className={styles.field}>
               <label className={styles.label}>Tags</label>
-              <div className={styles.tagsPicker}>
-                {availableTags.map((t) => (
-                  <TagButton
-                    key={t}
-                    label={`#${t}`}
-                    selected={selectedTags.includes(t)}
-                    onClick={() => toggleTag(t)}
-                  />
-                ))}
-              </div>
+              <TagInput
+                value={selectedTags}
+                onChange={setSelectedTags}
+                name="tags"
+              />
             </div>
 
             {/* Location of Meetup */}

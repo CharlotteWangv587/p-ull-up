@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar/navbar";
 import NotificationButton from "@/components/NotificationButton/notification-button";
 import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
 import EventCard from "@/components/EventCard/event-card";
-import TagButton from "@/components/TagButton/tag-button";
+import TagInput from "@/components/TagInput/tag-input";
 import styles from "@/app/eventposting/eventposting.module.css";
 import editStyles from "./edit-event.module.css";
 
@@ -77,11 +77,6 @@ const DEFAULT_EVENT: MockEvent = {
   waitlist: false,
 };
 
-const AVAILABLE_TAGS = [
-  "on campus", "off campus", "party", "outdoors", "indoors",
-  "departmental", "club", "organization", "other", "food",
-];
-
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function EditEventPage() {
@@ -102,12 +97,6 @@ export default function EditEventPage() {
   const [tbdChecked, setTbdChecked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
-  function toggleTag(tag: string) {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
-  }
 
   const dateText = tbdChecked
     ? "Date/Time TBD"
@@ -216,16 +205,11 @@ export default function EditEventPage() {
 
             <div className={styles.field}>
               <label className={styles.label}>Tags</label>
-              <div className={styles.tagsPicker}>
-                {AVAILABLE_TAGS.map((t) => (
-                  <TagButton
-                    key={t}
-                    label={`#${t}`}
-                    selected={selectedTags.includes(t)}
-                    onClick={() => toggleTag(t)}
-                  />
-                ))}
-              </div>
+              <TagInput
+                value={selectedTags}
+                onChange={setSelectedTags}
+                name="tags"
+              />
             </div>
 
             <div className={styles.field}>
