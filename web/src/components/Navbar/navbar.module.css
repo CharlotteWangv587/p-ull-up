@@ -33,8 +33,87 @@
 }
 
 .searchContainer {
-  width: 100%;
-  max-width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 620px;
+}
+
+.searchFormWrap {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+/* ── Time filter ── */
+.timeFilterWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.timeFilterBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 15px;
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(151, 51, 238, 0.28);
+  transition: opacity 0.15s, transform 0.15s;
+  font-family: inherit;
+}
+
+.timeFilterBtn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.timeDropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 14px;
+  padding: 6px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+  z-index: 200;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeOption {
+  padding: 9px 13px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.timeOption:hover {
+  background: rgba(151, 51, 238, 0.08);
+  color: #9733ee;
+}
+
+.timeOptionActive {
+  background: rgba(151, 51, 238, 0.08);
+  color: #9733ee;
 }
 
 .searchWrapper {
@@ -122,6 +201,143 @@
   border: none;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* ── Keyword mode: pill area inside search bar ── */
+.tagPillArea {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  cursor: text;
+  min-height: 36px;
+  overflow: hidden;
+}
+
+.tagPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+  padding: 0 7px 0 9px;
+  border-radius: 999px;
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tagPillRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 900;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+
+.tagPillRemove:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.tagSearchInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.9rem;
+  color: #333;
+  flex: 1;
+  min-width: 80px;
+  padding: 0;
+  line-height: 1;
+}
+
+.tagSearchInput::placeholder {
+  color: #9ca3af;
+}
+
+/* ── Tag dropdown popup ── */
+.tagDropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+  z-index: 200;
+  display: grid;
+  gap: 10px;
+}
+
+.tagDropdownHeading {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.tagDropdownPresets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.tagDropdownDivider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tagDropdownDivider::before,
+.tagDropdownDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(151, 51, 238, 0.14);
+}
+
+.tagDropdownHint {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 600;
+  margin: 0;
+}
+
+.tagDropdownHint kbd {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  font-size: 10px;
+  font-weight: 700;
+  color: #374151;
+  font-family: inherit;
 }
 
 /* ════════════════════════════════

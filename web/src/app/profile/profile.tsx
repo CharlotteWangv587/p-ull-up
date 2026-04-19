@@ -5,6 +5,7 @@ import styles from "./profile.module.css";
 import Navbar from "@/components/Navbar/navbar";
 import NotificationButton from "@/components/NotificationButton/notification-button";
 import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
+import AnimatedPageBackground from "@/components/AnimatedPageBackground/animated-page-background";
 
 type ProfileValues = {
   name: string;
@@ -213,9 +214,11 @@ export default function ProfilePage() {
   const canSavePassword = currentPassword.trim().length >= 6;
 
   return (
+    <AnimatedPageBackground>
     <div className={styles.page}>
       <Navbar
         showAuth={false}
+        logoHref="/personalized-dashboard"
         rightContent={
           <>
             <NotificationButton />
@@ -336,6 +339,7 @@ export default function ProfilePage() {
         </section>
       </main>
     </div>
+    </AnimatedPageBackground>
   );
 }
 

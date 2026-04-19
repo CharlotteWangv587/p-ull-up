@@ -5,7 +5,6 @@
 
 .page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #f8f1ff 0%, #f4f4f9 65%);
   color: #1f2937;
   font-family: 'Inter', sans-serif;
 }
@@ -34,11 +33,12 @@
   gap: 6px;
   font-size: 13px;
   font-weight: 600;
-  color: #9733ee;
+  color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
 }
 
 .backLink:hover {
+  color: #ffffff;
   text-decoration: underline;
 }
 
@@ -50,13 +50,13 @@
   font-size: 1.85rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  color: #1f2937;
+  color: #ffffff;
   margin: 0 0 4px;
 }
 
 .pageCount {
   font-size: 13px;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.65);
   font-weight: 500;
 }
 

@@ -1,10 +1,9 @@
 .page {
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--gradient-end) 0%, var(--gradient-start) 100%);
   display: flex;
-  flex-direction: column;    /* ← stack navbar and card vertically */
+  flex-direction: column;
   align-items: center;
-  gap: 40px;          /* ← space between Navbar and card */
+  gap: 40px;
 }
 
 .layout {
@@ -156,6 +155,12 @@
 
 .row .field {
   flex: 1;
+}
+
+.campusRow {
+  display: flex;
+  flex-wrap: wrap;   /* allows buttons to wrap to next line */
+  gap: 10px;         /* ← THIS controls spacing between buttons */
 }
 
 .tbdRow {

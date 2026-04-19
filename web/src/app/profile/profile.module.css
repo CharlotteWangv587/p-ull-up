@@ -9,7 +9,6 @@
 
 .page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #f3edfd 0%, #f5f2fb 65%);
   color: var(--text-dark);
 }
 

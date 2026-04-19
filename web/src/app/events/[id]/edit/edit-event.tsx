@@ -126,6 +126,7 @@ export default function EditEventPage() {
     <div className={styles.page}>
       <Navbar
         showAuth={false}
+        logoHref="/personalized-dashboard"
         rightContent={
           <>
             <NotificationButton />

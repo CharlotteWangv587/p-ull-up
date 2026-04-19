@@ -1,6 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import Navbar from "@/components/Navbar/navbar";
+import NotificationButton from "@/components/NotificationButton/notification-button";
+import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
 import EventCard from "@/components/EventCard/event-card";
+import AnimatedPageBackground from "@/components/AnimatedPageBackground/animated-page-background";
+import TagButton from "@/components/TagButton/tag-button";
+import { DEFAULT_PRESET_TAGS, normalizeTag } from "@/components/TagInput/tag-input";
+import { CAMPUS_TAGS, TIME_OPTIONS } from "@/components/Navbar/navbar";
+import { getCampusColor } from "@/lib/campus";
 import styles from "./events.module.css";
 
 const mockEvents = [
@@ -8,7 +18,7 @@ const mockEvents = [
     id: "1",
     title: "Afrofusion",
     subTitle: "Dom's Lounge",
-    tags: ["party", "on campus", "pomona", "afrobeats"],
+    tags: ["pomona", "party", "on campus", "afrobeats"],
     dateText: "Sat, Apr 11",
     timeText: "11:00 PM–1:00 AM",
     interestedCount: 47,
@@ -18,7 +28,7 @@ const mockEvents = [
     id: "2",
     title: "Nochella",
     subTitle: "Walker Beach",
-    tags: ["music", "food", "outdoors", "vendors", "concert", "tattoos", "flea market"],
+    tags: ["pitzer", "music", "food", "outdoors", "vendors", "concert"],
     dateText: "Saturday, Apr 11",
     timeText: "3:00 PM - 10:00 PM",
     interestedCount: 269,
@@ -28,7 +38,7 @@ const mockEvents = [
     id: "3",
     title: "Beginner Daze 5C Surf Club x POCO",
     subTitle: "Santa Monica",
-    tags: ["surfing", "outdoors", "off campus"],
+    tags: ["all 5cs", "surfing", "outdoors", "off campus"],
     dateText: "Sunday, Apr 19",
     timeText: "9:00 AM - 4:00 PM",
     interestedCount: 25,
@@ -38,7 +48,7 @@ const mockEvents = [
     id: "4",
     title: "Techstars Mixer",
     subTitle: "DTLA",
-    tags: ["networking", "startup"],
+    tags: ["cmc", "networking", "startup"],
     dateText: "Thu, Apr 24",
     timeText: "6:00 PM",
     interestedCount: 31,
@@ -46,36 +56,271 @@ const mockEvents = [
   },
 ] as const;
 
-export default function EventsIndexPage() {
-  return (
-    <div className={styles.page}>
-      <Navbar />
-      <main className={styles.wrap}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Events</h1>
-          <Link className={styles.createLink} href="/eventposting">
-            Create event
-          </Link>
-        </div>
+type SearchCategory = "keyword" | "event" | "campus";
 
-        <div className={styles.grid}>
-          {mockEvents.map((e) => (
-            <EventCard
-              key={e.id}
-              title={e.title}
-              subTitle={e.subTitle}
-              tags={e.tags.map((t) => ({ id: `${e.id}-${t}`, label: `#${t}` }))}
-              dateText={e.dateText}
-              timeText={e.timeText}
-              interestedCount={e.interestedCount}
-              goingCount={e.goingCount}
-              ctaLabel="View Event"
-              href={`/events/${e.id}`}
+const SEARCH_CATEGORIES: { value: SearchCategory; label: string; placeholder: string }[] = [
+  { value: "keyword", label: "Keyword",    placeholder: "Type a tag and press Enter…" },
+  { value: "event",   label: "Event name", placeholder: "Search by event name…"        },
+  { value: "campus",  label: "Campus",     placeholder: "Choose a campus…"             },
+];
+
+function ChevronDown() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+// ── Full-featured events-page search bar ───────────────────────────────────────
+function EventsSearchBar() {
+  const [category, setCategory] = useState<SearchCategory>("keyword");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [customInput, setCustomInput] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedTime, setSelectedTime] = useState("Within 7 days");
+  const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const isTagMode = category === "keyword" || category === "campus";
+  const isKeywordMode = category === "keyword";
+  const currentPresets = isKeywordMode ? DEFAULT_PRESET_TAGS : CAMPUS_TAGS;
+  const active = SEARCH_CATEGORIES.find((c) => c.value === category)!;
+
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+        setTimeDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  function addTag(raw: string) {
+    const tag = normalizeTag(raw);
+    if (!tag || selectedTags.includes(tag)) return;
+    setSelectedTags((prev) => [...prev, tag]);
+  }
+
+  function removeTag(tag: string) {
+    setSelectedTags((prev) => prev.filter((t) => t !== tag));
+  }
+
+  function togglePreset(tag: string) {
+    const normalized = normalizeTag(tag);
+    if (selectedTags.includes(normalized)) removeTag(normalized);
+    else addTag(tag);
+  }
+
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      if (customInput.trim()) { addTag(customInput); setCustomInput(""); }
+    }
+    if (e.key === "Backspace" && customInput === "" && selectedTags.length > 0) {
+      removeTag(selectedTags[selectedTags.length - 1]);
+    }
+  }
+
+  return (
+    <div className={styles.eventsSearchWrap} ref={containerRef}>
+
+      {/* ── Search bar ── */}
+      <div className={styles.eventsSearchBarWrap}>
+        <form
+          className={styles.eventsSearchBar}
+          onSubmit={(e) => { e.preventDefault(); setDropdownOpen(false); }}
+        >
+          {/* Category selector */}
+          <select
+            className={styles.eventsSearchCategory}
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value as SearchCategory);
+              setDropdownOpen(false);
+              setSelectedTags([]);
+              setCustomInput("");
+              setSearchQuery("");
+            }}
+            aria-label="Search category"
+          >
+            {SEARCH_CATEGORIES.map((cat) => (
+              <option key={cat.value} value={cat.value}>{cat.label}</option>
+            ))}
+          </select>
+
+          <div className={styles.eventsDivider} />
+
+          {isTagMode ? (
+            <div
+              className={styles.eventsPillArea}
+              onClick={() => setDropdownOpen(true)}
+            >
+              {selectedTags.map((tag) => (
+                <span key={tag} className={styles.eventsPill}>
+                  <span>#{tag}</span>
+                  <button
+                    type="button"
+                    className={styles.eventsPillRemove}
+                    onClick={(e) => { e.stopPropagation(); removeTag(tag); }}
+                    aria-label={`Remove #${tag}`}
+                  >✕</button>
+                </span>
+              ))}
+              <input
+                className={styles.eventsTagInput}
+                type="text"
+                placeholder={selectedTags.length === 0 ? active.placeholder : ""}
+                value={customInput}
+                onChange={(e) => setCustomInput(e.target.value)}
+                onFocus={() => setDropdownOpen(true)}
+                onKeyDown={handleKeyDown}
+                autoComplete="off"
+                aria-label="Filter events by tag"
+              />
+            </div>
+          ) : (
+            <input
+              className={styles.eventsEventInput}
+              type="text"
+              placeholder={active.placeholder}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search by event name"
             />
-          ))}
-        </div>
-      </main>
+          )}
+
+          {(selectedTags.length > 0 || searchQuery) && (
+            <button
+              type="button"
+              className={styles.eventsClearBtn}
+              onClick={(e) => { e.stopPropagation(); setSelectedTags([]); setCustomInput(""); setSearchQuery(""); }}
+              aria-label="Clear search"
+            >
+              Clear
+            </button>
+          )}
+
+          <button type="submit" className={styles.eventsSubmitBtn} aria-label="Search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </button>
+        </form>
+
+        {/* Tag/campus dropdown */}
+        {isTagMode && dropdownOpen && (
+          <div className={styles.eventsDropdown}>
+            <p className={styles.eventsDropdownHeading}>
+              {isKeywordMode ? "Common tags" : "Campuses"}
+            </p>
+            <div className={styles.eventsDropdownPresets}>
+              {currentPresets.map((tag) => (
+                <TagButton
+                  key={tag}
+                  label={`#${tag}`}
+                  selected={selectedTags.includes(normalizeTag(tag))}
+                  onClick={() => togglePreset(tag)}
+                  accentColor={category === "campus" ? getCampusColor(tag.toLowerCase()) : undefined}
+                />
+              ))}
+            </div>
+            {isKeywordMode && (
+              <>
+                <div className={styles.eventsDropdownDivider}>
+                  <span>or add your own</span>
+                </div>
+                <p className={styles.eventsDropdownHint}>
+                  Type a tag in the search bar above and press <kbd>Enter</kbd> to add it.
+                </p>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* ── Time filter ── */}
+      <div className={styles.eventsTimeWrap}>
+        <button
+          type="button"
+          className={styles.eventsTimeBtn}
+          onClick={() => { setTimeDropdownOpen((p) => !p); setDropdownOpen(false); }}
+          aria-label="Filter by time"
+        >
+          {selectedTime} <ChevronDown />
+        </button>
+        {timeDropdownOpen && (
+          <div className={styles.eventsTimeDropdown}>
+            {TIME_OPTIONS.map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                className={`${styles.eventsTimeOption} ${opt === selectedTime ? styles.eventsTimeOptionActive : ""}`}
+                onClick={() => { setSelectedTime(opt); setTimeDropdownOpen(false); }}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }
 
+// ── Page ───────────────────────────────────────────────────────────────────────
+export default function EventsIndexPage() {
+  return (
+    <AnimatedPageBackground>
+      <div className={styles.page}>
+        <Navbar
+          showAuth={false}
+          hideSearch={true}
+          logoHref="/personalized-dashboard"
+          rightContent={
+            <>
+              <NotificationButton />
+              <ProfileDropdown />
+            </>
+          }
+        />
+
+        <div className={styles.heroContent}>
+          <h1 className={styles.title}>Events to Explore...</h1>
+          <Link className={styles.createLink} href="/eventposting">
+            + Post your own event
+          </Link>
+        </div>
+
+        <div className={styles.searchSection}>
+          <EventsSearchBar />
+        </div>
+
+        <main className={styles.wrap}>
+          <div className={styles.grid}>
+            {mockEvents.map((e) => (
+              <EventCard
+                key={e.id}
+                title={e.title}
+                subTitle={e.subTitle}
+                tags={e.tags.map((t) => ({ id: `${e.id}-${t}`, label: `#${t}`, accentColor: getCampusColor(t) }))}
+                dateText={e.dateText}
+                timeText={e.timeText}
+                interestedCount={e.interestedCount}
+                goingCount={e.goingCount}
+                ctaLabel="View Event"
+                href={`/events/${e.id}`}
+              />
+            ))}
+          </div>
+        </main>
+      </div>
+    </AnimatedPageBackground>
+  );
+}

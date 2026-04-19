@@ -3,8 +3,14 @@
 import { useState } from 'react';
 import styles from './eventposting.module.css';
 import Navbar from '@/components/Navbar/navbar';
+import NotificationButton from '@/components/NotificationButton/notification-button';
+import ProfileDropdown from '@/components/ProfileDropdown/profile-dropdown';
 import EventCard from '@/components/EventCard/event-card';
 import TagInput from '@/components/TagInput/tag-input';
+import TagButton from '@/components/TagButton/tag-button';
+import AnimatedPageBackground from '@/components/AnimatedPageBackground/animated-page-background';
+import { CAMPUS_TAGS, getCampusColor } from '@/lib/campus';
+import { normalizeTag } from '@/components/TagInput/tag-input';
 
 export default function EventPosting() {
   const [tbdChecked, setTbdChecked] = useState(false);
@@ -14,6 +20,7 @@ export default function EventPosting() {
   const [eventTime, setEventTime] = useState('');
   const [eventLocation, setEventLocation] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [campusAffiliation, setCampusAffiliation] = useState<string | null>(null);
 
   const dateText = tbdChecked
     ? 'Date/Time TBD'
@@ -34,9 +41,27 @@ export default function EventPosting() {
         })
       : undefined;
 
+  // Build preview tags — campus first so it appears prominently
+  const previewTags = [
+    ...(campusAffiliation
+      ? [{ id: `campus-${campusAffiliation}`, label: `#${campusAffiliation}`, accentColor: getCampusColor(normalizeTag(campusAffiliation)) }]
+      : []),
+    ...selectedTags.map((t) => ({ id: t, label: `#${t}`, accentColor: getCampusColor(t) })),
+  ];
+
   return (
+    <AnimatedPageBackground>
     <div className={styles.page}>
-      <Navbar />
+      <Navbar
+        showAuth={false}
+        logoHref="/personalized-dashboard"
+        rightContent={
+          <>
+            <NotificationButton />
+            <ProfileDropdown />
+          </>
+        }
+      />
       <div className={styles.layout}>
         <div className={styles.card}>
 
@@ -104,13 +129,32 @@ export default function EventPosting() {
               />
             </div>
 
-            {/* Tags */}
+            {/* Campus Affiliation (single select) */}
             <div className={styles.field}>
-              <label className={styles.label}>Tags</label>
+              <label className={styles.label}>Campus affiliation</label>
+              <div className={styles.campusRow}>
+                {CAMPUS_TAGS.map((campus) => {
+                  const normalized = normalizeTag(campus);
+                  return (
+                    <TagButton
+                      key={campus}
+                      label={`#${campus}`}
+                      selected={campusAffiliation === normalized}
+                      onClick={() => setCampusAffiliation(campusAffiliation === normalized ? null : normalized)}
+                      accentColor={getCampusColor(normalized)}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Keywords (formerly Tags) */}
+            <div className={styles.field}>
+              <label className={styles.label}>Keywords</label>
               <TagInput
                 value={selectedTags}
                 onChange={setSelectedTags}
-                name="tags"
+                name="keywords"
               />
             </div>
 
@@ -176,7 +220,7 @@ export default function EventPosting() {
           <EventCard
             title={eventName || 'Your event name'}
             subTitle={eventLocation || 'City, venue, or address'}
-            tags={selectedTags.map((t) => ({ id: t, label: `#${t}` }))}
+            tags={previewTags}
             dateText={dateText}
             timeText={timeText}
             ctaLabel="View Event"
@@ -185,5 +229,6 @@ export default function EventPosting() {
         </aside>
       </div>
     </div>
+    </AnimatedPageBackground>
   );
 }

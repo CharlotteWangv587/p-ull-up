@@ -7,6 +7,7 @@ export type EventCardTag = {
   label: string;
   selected?: boolean;
   onClick?: () => void;
+  accentColor?: string;
 };
 
 export type EventCardProps = {
@@ -94,6 +95,7 @@ export default function EventCard({
                 selected={t.selected}
                 onClick={t.onClick}
                 ariaLabel={`Tag: ${t.label}`}
+                accentColor={t.accentColor}
               />
             ))}
             {hiddenCount > 0 ? (
