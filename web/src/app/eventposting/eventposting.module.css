@@ -1,10 +1,9 @@
 .page {
   min-height: 100vh;
-  background: linear-gradient(135deg, var(--gradient-end) 0%, var(--gradient-start) 100%);
   display: flex;
-  flex-direction: column;    /* ← stack navbar and card vertically */
+  flex-direction: column;
   align-items: center;
-  gap: 40px;          /* ← space between Navbar and card */
+  gap: 40px;
 }
 
 .layout {
@@ -158,6 +157,12 @@
   flex: 1;
 }
 
+.campusRow {
+  display: flex;
+  flex-wrap: wrap;   /* allows buttons to wrap to next line */
+  gap: 10px;         /* ← THIS controls spacing between buttons */
+}
+
 .tbdRow {
   display: flex;
   align-items: center;
@@ -283,4 +288,63 @@
   opacity: 0.85;
   transform: translateY(-2px);   /* subtle lift on hover */
   box-shadow: 0 4px 12px rgba(151, 51, 238, 0.4);  /* purple glow */
+}
+
+/* ════════════════════════════════
+   DARK MODE
+   ════════════════════════════════ */
+
+:global(html.dark) .page {
+  background: linear-gradient(135deg, #2a1840 0%, #1a1825 100%);
+}
+
+:global(html.dark) .card {
+  background: rgba(30, 26, 44, 0.92);
+  border: 1px solid rgba(151, 51, 238, 0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+:global(html.dark) .heading {
+  color: #f0f0f8;
+}
+
+:global(html.dark) .label {
+  color: rgba(200, 180, 255, 0.75);
+}
+
+:global(html.dark) .tagline {
+  color: rgba(200, 180, 255, 0.55);
+}
+
+:global(html.dark) .input,
+:global(html.dark) .textarea {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(151, 51, 238, 0.25);
+  color: #f0f0f8;
+}
+
+:global(html.dark) .input::placeholder,
+:global(html.dark) .textarea::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+:global(html.dark) .input:focus,
+:global(html.dark) .textarea:focus {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(218, 34, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(151, 51, 238, 0.12);
+}
+
+:global(html.dark) .photoSection {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(151, 51, 238, 0.25);
+}
+
+:global(html.dark) .checkboxField {
+  color: rgba(200, 180, 255, 0.75);
+}
+
+:global(html.dark) .tbdLabel,
+:global(html.dark) .optionalTag {
+  color: rgba(200, 180, 255, 0.5);
 }

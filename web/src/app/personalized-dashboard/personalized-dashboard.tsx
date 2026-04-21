@@ -6,6 +6,8 @@ import Navbar from "@/components/Navbar/navbar";
 import NotificationButton from "@/components/NotificationButton/notification-button";
 import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
 import EventCard from "@/components/EventCard/event-card";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
+import { AnimatedHero } from "@/components/ui/animated-hero";
 
 const mockEvents = [
   {
@@ -59,6 +61,7 @@ export default function PersonalizedDashboardPage() {
     <div className={styles.container}>
       <Navbar
         showAuth={false}
+        logoHref="/personalized-dashboard"
         rightContent={
           <>
             <NotificationButton />
@@ -67,14 +70,11 @@ export default function PersonalizedDashboardPage() {
         }
       />
 
-      <header className={styles.hero}>
-        <h1>Find your group. Attend the event.</h1>
-        <p className={styles.tagline}>p-ull up: Social Coordination for Off-Campus Events</p>
-        <p className={styles.description}>
-          Don&apos;t miss out just because you lack a group. Match with nearby event-goers,
-          organize committed attendance, and coordinate safe carpooling.
-        </p>
-      </header>
+      <div className={styles.heroWrap}>
+        <BackgroundGradientAnimation containerClassName="w-full">
+          <AnimatedHero />
+        </BackgroundGradientAnimation>
+      </div>
 
       <section className={styles.eventsSection}>
         <div className={styles.sectionHeader}>

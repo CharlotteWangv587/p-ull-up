@@ -48,6 +48,7 @@
 
 .title {
   font-size: 18px;
+  font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.02em;
   margin: 0;
@@ -164,5 +165,43 @@
 
 .ctaLink:active {
   transform: translateY(1px);
+}
+
+/* ════════════════════════════════
+   DARK MODE — frosted glass cards
+   ════════════════════════════════ */
+
+:global(html.dark) .card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(151, 51, 238, 0.2);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+:global(html.dark) .card:hover {
+  border-color: rgba(218, 34, 255, 0.4);
+  box-shadow: 0 18px 48px rgba(151, 51, 238, 0.2), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+
+:global(html.dark) .media {
+  background: rgba(151, 51, 238, 0.12);
+  color: rgba(255, 255, 255, 0.3);
+}
+
+:global(html.dark) .title {
+  color: #f0f0f8;
+}
+
+:global(html.dark) .subTitle {
+  color: rgba(200, 180, 255, 0.7);
+}
+
+:global(html.dark) .dateTime {
+  color: #d8d8e8;
+}
+
+:global(html.dark) .counts {
+  color: rgba(200, 180, 255, 0.65);
 }
 

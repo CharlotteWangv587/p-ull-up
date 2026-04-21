@@ -3,6 +3,7 @@ import EventCard, { EventCardProps } from "@/components/EventCard/event-card";
 import Navbar from "@/components/Navbar/navbar";
 import NotificationButton from "@/components/NotificationButton/notification-button";
 import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
+import AnimatedPageBackground from "@/components/AnimatedPageBackground/animated-page-background";
 import styles from "./event-collection-page.module.css";
 
 const PencilIcon = () => (
@@ -42,9 +43,11 @@ export default function EventCollectionPage({
   headerAction,
 }: EventCollectionPageProps) {
   return (
+    <AnimatedPageBackground>
     <div className={styles.page}>
       <Navbar
         showAuth={false}
+        logoHref="/personalized-dashboard"
         rightContent={
           <>
             <NotificationButton />
@@ -103,5 +106,6 @@ export default function EventCollectionPage({
         </div>
       </section>
     </div>
+    </AnimatedPageBackground>
   );
 }

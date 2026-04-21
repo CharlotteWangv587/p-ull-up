@@ -1,7 +1,7 @@
 /* Purple-tint page (aligned with profile) */
 .page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #f8f1ff 0%, #f4f4f9 65%);
+  background: linear-gradient(180deg, #f3edfd 0%, #f5f2fb 65%);
   color: var(--text-dark);
   --line: rgba(151, 51, 238, 0.14);
   --line-strong: rgba(151, 51, 238, 0.22);
@@ -144,4 +144,40 @@
   .poster img {
     max-height: 420px;
   }
+}
+
+/* ════════════════════════════════
+   DARK MODE
+   ════════════════════════════════ */
+
+:global(html.dark) .page {
+  background: linear-gradient(180deg, #201830 0%, #1a1825 65%);
+  color: #e8e8f0;
+}
+
+:global(html.dark) .title {
+  color: #f0f0f8;
+}
+
+:global(html.dark) .metaLine {
+  color: rgba(220, 210, 255, 0.75);
+}
+
+:global(html.dark) .detailsText {
+  color: rgba(220, 210, 255, 0.8);
+}
+
+:global(html.dark) .posterShell {
+  background: #201830;
+  border-color: rgba(151, 51, 238, 0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+:global(html.dark) .poster {
+  background: linear-gradient(180deg, rgba(151,51,238,0.15) 0%, rgba(80,0,140,0.2) 100%);
+  color: rgba(255,255,255,0.25);
+}
+
+:global(html.dark) .block {
+  border-top-color: rgba(151, 51, 238, 0.15);
 }

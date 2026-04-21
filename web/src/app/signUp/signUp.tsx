@@ -9,6 +9,7 @@ import styles from "./signUp.module.css";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabasePublic } from "../../lib/supabase";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 
 /** Inline SVG icons for form fields—no icon library dependency. Reuse styles.inputIcon for position/color. */
 const PersonIcon = () => (
@@ -100,7 +101,10 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <BackgroundGradientAnimation
+      containerClassName="min-h-screen"
+      className="flex flex-col items-center justify-center px-6 py-10 min-h-screen"
+    >
       <Link href="/" className={styles.backLink} aria-label="Back to home">
         ← Back to home
       </Link>
@@ -159,6 +163,6 @@ export default function SignUpPage() {
           Returning User? <Link href="/personalized-dashboard" className={styles.signInLink}>Sign in</Link>
         </p>
       </div>
-    </div>
+    </BackgroundGradientAnimation>
   );
 }

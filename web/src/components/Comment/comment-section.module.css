@@ -80,3 +80,31 @@
   font-weight: 600;
   padding: 16px 0;
 }
+
+/* ════════════════════════════════
+   DARK MODE
+   ════════════════════════════════ */
+
+:global(html.dark) .input {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(151, 51, 238, 0.28);
+  color: #f0f0f8;
+}
+
+:global(html.dark) .input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+:global(html.dark) .input:focus {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(218, 34, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(151, 51, 238, 0.12);
+}
+
+:global(html.dark) .anonToggle {
+  color: rgba(200, 180, 255, 0.65);
+}
+
+:global(html.dark) .empty {
+  color: rgba(200, 180, 255, 0.45);
+}

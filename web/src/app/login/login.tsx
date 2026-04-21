@@ -120,7 +120,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <BackgroundGradientAnimation
+      containerClassName="min-h-screen"
+      className="flex flex-col items-center justify-center px-6 py-10 min-h-screen"
+    >
       <Link href="/" className={styles.backLink} aria-label="Back to home">
         ← Back to home
       </Link>
@@ -180,7 +183,7 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
-    </div>
+    </BackgroundGradientAnimation>
   );
 }
 
