@@ -1,0 +1,50 @@
+.btn {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(151, 51, 238, 0.28);
+  background: #ffffff;
+  color: #4b5563;
+  font-weight: 900;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+}
+
+.btn:hover {
+  background: rgba(151, 51, 238, 0.06);
+  border-color: rgba(151, 51, 238, 0.45);
+}
+
+.icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+}
+
+.sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+.activeInterested {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #ef4444;
+}
+
+.activeGoing {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.35);
+  color: #16a34a;
+}
+

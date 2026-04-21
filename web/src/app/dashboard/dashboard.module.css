@@ -319,53 +319,8 @@
 
 .eventGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 columns like the sketch */
-  gap: 30px;
-}
-
-.eventCard {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
-}
-
-.eventCard:hover {
-  transform: translateY(-5px);
-}
-
-.eventImagePlaceholder {
-  width: 100%;
-  height: 150px;
-  background-color: #eee;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #888;
-}
-
-/* NEW: VIEW GROUP BUTTON STYLING
-   Styled with brand purple and hover inversion.
-*/
-.viewGroupBtn {
-  width: 100%;
-  margin-top: 15px;
-  padding: 10px;
-  background: transparent;
-  border: 2px solid var(--gradient-end);
-  color: var(--gradient-end);
-  border-radius: 10px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.viewGroupBtn:hover {
-  background: var(--gradient-end);
-  color: white;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
 }
 
 /* SECTION 4: CALL TO ACTION (CTA)

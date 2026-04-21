@@ -157,23 +157,8 @@ export default function LoginPage() {
               required
             />
           </div>
-
-          {error && (
-            <p
-              role="alert"
-              aria-live="polite"
-              className={styles.errorMessage}
-            >
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            className={styles.btnPrimary}
-            disabled={loading}
-          >
-            {loading ? "Signing in..." : "Sign in"}
+          <button type="submit" className={styles.btnPrimary}>
+            Sign in
           </button>
 
           <button

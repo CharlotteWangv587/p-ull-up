@@ -1,0 +1,163 @@
+.wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+/* ── Bell button ── */
+.btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid #eadcfb;
+  background: #ffffff;
+  color: #5b2e9f;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  flex-shrink: 0;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(151, 51, 238, 0.15);
+}
+
+/* ── Unread count badge ── */
+.badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+/* ── Dropdown panel ── */
+.panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 320px;
+  background: #ffffff;
+  border: 1px solid #efebf8;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(22, 15, 40, 0.16);
+  z-index: 50;
+  overflow: hidden;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid #f3eeff;
+}
+
+.panelTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.markAllBtn {
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  color: #9733ee;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.markAllBtn:hover {
+  text-decoration: underline;
+}
+
+/* ── List ── */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+  max-height: 360px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e8dcfb transparent;
+}
+
+.empty {
+  padding: 28px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* ── Notification item ── */
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+  border-left: 3px solid transparent;
+}
+
+.item:hover {
+  background: #faf7ff;
+}
+
+.itemUnread {
+  background: #fdf9ff;
+  border-left-color: var(--accent, #9733ee);
+}
+
+.itemRead {
+  opacity: 0.72;
+}
+
+.itemIcon {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f5f0ff;
+  display: grid;
+  place-items: center;
+  margin-top: 1px;
+}
+
+.itemBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemMsg {
+  font-size: 13px;
+  color: #1f2937;
+  line-height: 1.4;
+  margin: 0 0 3px;
+}
+
+.itemTime {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.unreadDot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  margin-top: 5px;
+}
