@@ -1,70 +1,110 @@
 "use client";
 
-
 import Link from "next/link";
 import styles from "./login.module.css";
-import {useState} from "react";
-import {useRouter} from "next/navigation";
-import {supabasePublic} from "../../lib/supabase";
-import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
-
+import { useState } from "react";
+import { supabasePublic } from "../../lib/supabase";
 
 const EnvelopeIcon = () => (
-  <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    className={styles.inputIcon}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <rect width="20" height="16" x="2" y="4" rx="2" />
     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
   </svg>
 );
 
-
 const LockIcon = () => (
-  <svg className={styles.inputIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    className={styles.inputIcon}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
 );
 
-
 export default function LoginPage() {
-  const router = useRouter();
-
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  function mapAuthError(message: string, status?: number) {
+    const lower = (message || "").toLowerCase();
+
+    if (status === 429 || lower.includes("rate limit exceeded")) {
+      return "Too many email requests. Please wait a bit and try again.";
+    }
+
+    if (
+      lower.includes("invalid login credentials") ||
+      lower.includes("invalid credentials") ||
+      lower.includes("email not found") ||
+      lower.includes("invalid email or password")
+    ) {
+      return "Incorrect email or password.";
+    }
+
+    if (
+      lower.includes("email not confirmed") ||
+      lower.includes("confirm your email")
+    ) {
+      return "Please confirm your email before signing in.";
+    }
+
+    if (lower.includes("user already registered")) {
+      return "An account with this email already exists.";
+    }
+
+    return message || "Unable to continue right now. Please try again.";
+  }
 
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (loading) return;
+
     setError("");
     setLoading(true);
 
+    const normalizedEmail = email.trim().toLowerCase();
 
-    const { error } = await supabasePublic.auth.signInWithPassword({
-      email,
+    const { data, error } = await supabasePublic.auth.signInWithPassword({
+      email: normalizedEmail,
       password,
     });
 
-
-    setLoading(false);
-
-
     if (error) {
-      setError(error.message);
+      setError(mapAuthError(error.message, (error as { status?: number }).status));
+      setLoading(false);
       return;
     }
 
+    if (!data.session) {
+      setError("Sign-in did not create a session.");
+      setLoading(false);
+      return;
+    }
 
-    router.push("/personalized-dashboard");
-    router.refresh();
+    window.location.assign("/personalized-dashboard");
   }
 
-
   async function handleGoogleSignIn() {
+    if (loading) return;
+
     setError("");
     setLoading(true);
-
 
     const { error } = await supabasePublic.auth.signInWithOAuth({
       provider: "google",
@@ -73,13 +113,11 @@ export default function LoginPage() {
       },
     });
 
-
     if (error) {
-      setError(error.message);
+      setError(mapAuthError(error.message, (error as { status?: number }).status));
       setLoading(false);
     }
   }
-
 
   return (
     <BackgroundGradientAnimation
@@ -89,8 +127,11 @@ export default function LoginPage() {
       <Link href="/" className={styles.backLink} aria-label="Back to home">
         ← Back to home
       </Link>
+
       <div className={styles.card}>
         <h1 className={styles.title}>Welcome Back!</h1>
+        <p className={styles.subtitle}>Sign in to continue to your dashboard.</p>
+
         <form className={styles.form} onSubmit={handleLogin}>
           <div className={styles.inputGroup}>
             <EnvelopeIcon />
@@ -105,6 +146,7 @@ export default function LoginPage() {
               required
             />
           </div>
+
           <div className={styles.inputGroup}>
             <LockIcon />
             <input
@@ -118,31 +160,42 @@ export default function LoginPage() {
               required
             />
           </div>
-          <div className={styles.forgotRow}>
-            <Link href="/forgot-password" className={styles.forgotLink}>
-              Forgot password?
-            </Link>
-          </div>
           <button type="submit" className={styles.btnPrimary}>
             Sign in
           </button>
-          <button type="button" className={styles.btnGoogle} aria-label="Sign in with Google">
+
+          <button
+            type="button"
+            className={styles.btnGoogle}
+            aria-label="Sign in with Google"
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+          >
             <GoogleIcon />
             Sign in with Google
           </button>
         </form>
+
         <p className={styles.footer}>
-          First time? <Link href="/personalized-dashboard" className={styles.createLink}>Create Account</Link>
+          First time?{" "}
+          <Link href="/sign-up" className={styles.createLink}>
+            Create Account
+          </Link>
         </p>
       </div>
     </BackgroundGradientAnimation>
   );
 }
 
-
 function GoogleIcon() {
   return (
-    <svg className={styles.googleIcon} viewBox="0 0 24 24" width="20" height="20" aria-hidden>
+    <svg
+      className={styles.googleIcon}
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      aria-hidden
+    >
       <path
         fill="#4285F4"
         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -162,6 +215,3 @@ function GoogleIcon() {
     </svg>
   );
 }
-
-
-
