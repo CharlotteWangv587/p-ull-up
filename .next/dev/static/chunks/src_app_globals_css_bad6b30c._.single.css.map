@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/app/globals.css"],"sourcesContent":["@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');\n\n:root {\n  --gradient-start: #da22ff;\n  --gradient-end: #9733ee;\n  --text-dark: #333333;\n  --text-light: #ffffff;\n  --bg-light: #f4f4f9;\n  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);\n}\n\nhtml,\nbody {\n  max-width: 100vw;\n  overflow-x: hidden;\n}\n\nbody {\n  color: var(--text-dark);\n  background: var(--bg-light);\n  font-family: 'Inter', sans-serif;\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n}\n\n* {\n  box-sizing: border-box;\n  padding: 0;\n  margin: 0;\n}\n\na {\n  color: inherit;\n  text-decoration: none;\n}\n"],"names":[],"mappings":"AAEA;;;;;;;;;AASA;;;;;AAMA;;;;;;;;AAQA;;;;;;AAMA"}}]
+}

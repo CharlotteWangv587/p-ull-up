@@ -3,7 +3,9 @@
 import Link from "next/link";
 import styles from "./login.module.css";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabasePublic } from "../../lib/supabase";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 
 const EnvelopeIcon = () => (
   <svg
@@ -36,6 +38,7 @@ const LockIcon = () => (
 );
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -91,13 +94,7 @@ export default function LoginPage() {
       return;
     }
 
-    if (!data.session) {
-      setError("Sign-in did not create a session.");
-      setLoading(false);
-      return;
-    }
-
-    window.location.assign("/personalized-dashboard");
+    router.push("/personalized-dashboard");
   }
 
   async function handleGoogleSignIn() {

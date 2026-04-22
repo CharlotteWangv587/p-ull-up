@@ -17,7 +17,7 @@ const SUPABASE_ANON_KEY = SUPABASE_ANON_KEY_RAW;
  * Use for endpoints that do not require a user session.
  */
 export const supabasePublic = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: { persistSession: false },
+  auth: { persistSession: true },
 });
 
 /**

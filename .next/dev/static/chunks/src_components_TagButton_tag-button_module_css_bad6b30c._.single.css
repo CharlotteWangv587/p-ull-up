@@ -1,0 +1,61 @@
+/* [project]/src/components/TagButton/tag-button.module.css [app-client] (css) */
+.tag-button-module__ncEPyq__tag {
+  color: #5b2e9f;
+  letter-spacing: .01em;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  background: #fff;
+  border: 1px solid #9733ee47;
+  border-radius: 999px;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  transition: transform .16s, box-shadow .16s, background .16s, color .16s;
+  display: inline-flex;
+  box-shadow: 0 2px 10px #9733ee1a;
+}
+
+.tag-button-module__ncEPyq__tagSm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 2px 8px #9733ee17;
+}
+
+.tag-button-module__ncEPyq__tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px #9733ee2e;
+}
+
+.tag-button-module__ncEPyq__tag:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px #9733ee24;
+}
+
+.tag-button-module__ncEPyq__tagSelected {
+  color: #fff;
+  background: linear-gradient(45deg, #da22ff, #9733ee);
+  border-color: #0000;
+  box-shadow: 0 12px 22px #9733ee47;
+}
+
+.tag-button-module__ncEPyq__tagDisabled {
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px #00000014;
+}
+
+.tag-button-module__ncEPyq__tagDisabled:hover {
+  transform: none;
+  box-shadow: 0 2px 8px #00000014;
+}
+
+/*# sourceMappingURL=src_components_TagButton_tag-button_module_css_bad6b30c._.single.css.map*/
