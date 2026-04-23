@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import styles from "../dashboard/dashboard.module.css";
 import Navbar from "@/components/Navbar/navbar";
 import NotificationButton from "@/components/NotificationButton/notification-button";
@@ -11,6 +10,7 @@ import EventCard from "@/components/EventCard/event-card";
 import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
 import { AnimatedHero } from "@/components/ui/animated-hero";
 import { supabasePublic } from "@/lib/supabase";
+import { useAuth } from "@/context/auth";
 
 type EventRow = {
   id: string;
@@ -40,7 +40,7 @@ function formatTime(start: string, end?: string | null) {
 }
 
 export default function PersonalizedDashboardPage() {
-  const router = useRouter();
+  const { signOut } = useAuth();
   const [events, setEvents] = useState<EventRow[]>([]);
 
   useEffect(() => {
@@ -56,11 +56,6 @@ export default function PersonalizedDashboardPage() {
       });
   }, []);
 
-  async function handleSignOut() {
-    await supabasePublic.auth.signOut();
-    router.push("/");
-  }
-
   return (
     <div className={styles.container}>
       <Navbar
@@ -69,7 +64,7 @@ export default function PersonalizedDashboardPage() {
         rightContent={
           <>
             <NotificationButton />
-            <ProfileDropdown onSignOut={handleSignOut} />
+            <ProfileDropdown onSignOut={signOut} />
           </>
         }
       />
