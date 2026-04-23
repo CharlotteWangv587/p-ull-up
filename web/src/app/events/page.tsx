@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import Navbar from "@/components/Navbar/navbar";
+import { useAuth } from "@/context/auth";
 import NotificationButton from "@/components/NotificationButton/notification-button";
 import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
 import EventCard from "@/components/EventCard/event-card";
@@ -75,6 +76,7 @@ function ChevronDown() {
 
 // ── Full-featured events-page search bar ───────────────────────────────────────
 function EventsSearchBar() {
+  const router = useRouter();
   const [category, setCategory] = useState<SearchCategory>("keyword");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -116,14 +118,74 @@ function EventsSearchBar() {
     else addTag(tag);
   }
 
+  function timeOptionToDateRange(option: string): { start_after: string; start_before?: string } {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    function addDays(d: Date, n: number): Date {
+      const r = new Date(d); r.setDate(r.getDate() + n); return r;
+    }
+    function nextSaturday(from: Date): Date {
+      const day = from.getDay();
+      return addDays(from, day === 6 ? 7 : (6 - day + 7) % 7 || 7);
+    }
+    switch (option) {
+      case "This weekend": { const sat = nextSaturday(today); return { start_after: sat.toISOString(), start_before: addDays(sat, 2).toISOString() }; }
+      case "Within 7 days": return { start_after: today.toISOString(), start_before: addDays(today, 7).toISOString() };
+      case "Next weekend": { const sat = nextSaturday(addDays(today, 7)); return { start_after: sat.toISOString(), start_before: addDays(sat, 2).toISOString() }; }
+      case "Within 30 days": return { start_after: today.toISOString(), start_before: addDays(today, 30).toISOString() };
+      default: return { start_after: today.toISOString() };
+    }
+  }
+
+  function doSearch(explicitTags?: string[]) {
+    setDropdownOpen(false);
+    const { start_after, start_before } = timeOptionToDateRange(selectedTime);
+    const params = new URLSearchParams({ category, start_after });
+    if (start_before) params.set("start_before", start_before);
+
+    if (isTagMode) {
+      const allTags = explicitTags ?? [
+        ...selectedTags,
+        ...(customInput.trim() ? [normalizeTag(customInput)] : []),
+      ];
+      if (allTags.length > 0) params.set("tags", allTags.join(","));
+    } else {
+      const q = searchQuery.trim();
+      if (q) params.set("q", q);
+    }
+
+    router.push(`/search?${params.toString()}`);
+  }
+
   function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" || e.key === ",") {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (customInput.trim()) {
+        const newTag = normalizeTag(customInput);
+        const newTags = selectedTags.includes(newTag)
+          ? selectedTags
+          : [...selectedTags, newTag];
+        setSelectedTags(newTags);
+        setCustomInput("");
+        doSearch(newTags);
+      } else {
+        doSearch();
+      }
+      return;
+    }
+    if (e.key === ",") {
       e.preventDefault();
       if (customInput.trim()) { addTag(customInput); setCustomInput(""); }
+      return;
     }
     if (e.key === "Backspace" && customInput === "" && selectedTags.length > 0) {
       removeTag(selectedTags[selectedTags.length - 1]);
     }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    doSearch();
   }
 
   return (
@@ -133,7 +195,7 @@ function EventsSearchBar() {
       <div className={styles.eventsSearchBarWrap}>
         <form
           className={styles.eventsSearchBar}
-          onSubmit={(e) => { e.preventDefault(); setDropdownOpen(false); }}
+          onSubmit={handleSubmit}
         >
           {/* Category selector */}
           <select
@@ -275,7 +337,8 @@ function EventsSearchBar() {
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────────
-export default function EventsIndexPage() {
+function EventsPageInner() {
+  const { signOut } = useAuth();
   return (
     <AnimatedPageBackground>
       <div className={styles.page}>
@@ -286,7 +349,7 @@ export default function EventsIndexPage() {
           rightContent={
             <>
               <NotificationButton />
-              <ProfileDropdown />
+              <ProfileDropdown onSignOut={signOut} />
             </>
           }
         />
@@ -323,4 +386,8 @@ export default function EventsIndexPage() {
       </div>
     </AnimatedPageBackground>
   );
+}
+
+export default function EventsIndexPage() {
+  return <EventsPageInner />;
 }
