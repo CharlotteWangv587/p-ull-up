@@ -8,6 +8,8 @@ import { ThemeToggle } from "@/components/ThemeToggle/theme-toggle";
 import TagButton from "@/components/TagButton/tag-button";
 import { DEFAULT_PRESET_TAGS, normalizeTag } from "@/components/TagInput/tag-input";
 import { getCampusColor } from "@/lib/campus";
+import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
+import { useAuth } from "@/context/auth";
 
 type SearchCategory = "keyword" | "event" | "campus";
 
@@ -50,6 +52,7 @@ export default function Navbar({
   hideSearch = false,
 }: NavbarProps) {
   const router = useRouter();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [category, setCategory] = useState<SearchCategory>("keyword");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -91,13 +94,89 @@ export default function Navbar({
     else addTag(tag);
   }
 
+  function timeOptionToDateRange(option: string): { start_after: string; start_before?: string } {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    function addDays(d: Date, n: number): Date {
+      const r = new Date(d);
+      r.setDate(r.getDate() + n);
+      return r;
+    }
+
+    function nextSaturday(from: Date): Date {
+      const day = from.getDay();
+      const daysToSat = day === 6 ? 7 : (6 - day + 7) % 7 || 7;
+      return addDays(from, daysToSat);
+    }
+
+    switch (option) {
+      case "This weekend": {
+        const sat = nextSaturday(today);
+        return { start_after: sat.toISOString(), start_before: addDays(sat, 2).toISOString() };
+      }
+      case "Within 7 days":
+        return { start_after: today.toISOString(), start_before: addDays(today, 7).toISOString() };
+      case "Next weekend": {
+        const sat = nextSaturday(addDays(today, 7));
+        return { start_after: sat.toISOString(), start_before: addDays(sat, 2).toISOString() };
+      }
+      case "Within 30 days":
+        return { start_after: today.toISOString(), start_before: addDays(today, 30).toISOString() };
+      default: // "All upcoming"
+        return { start_after: today.toISOString() };
+    }
+  }
+
+  // Navigate to /search with the given tags (or current selectedTags) + current filters.
+  // Accepts an explicit tags array so callers can pass freshly-computed state
+  // without waiting for a React re-render.
+  function doSearch(explicitTags?: string[]) {
+    setTagDropdownOpen(false);
+    const { start_after, start_before } = timeOptionToDateRange(selectedTime);
+    const params = new URLSearchParams({ category, start_after });
+    if (start_before) params.set("start_before", start_before);
+
+    if (isTagMode) {
+      const allTags = explicitTags ?? [
+        ...selectedTags,
+        ...(customTagInput.trim() ? [normalizeTag(customTagInput)] : []),
+      ];
+      if (allTags.length > 0) params.set("tags", allTags.join(","));
+    } else {
+      const q = searchQuery.trim();
+      if (q) params.set("q", q);
+    }
+
+    router.push(`/search?${params.toString()}`);
+  }
+
   function handleCustomTagKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter" || e.key === ",") {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (customTagInput.trim()) {
+        // Commit the typed tag and navigate immediately — one keystroke does both.
+        const newTag = normalizeTag(customTagInput);
+        const newTags = selectedTags.includes(newTag)
+          ? selectedTags
+          : [...selectedTags, newTag];
+        setSelectedTags(newTags);
+        setCustomTagInput("");
+        doSearch(newTags);
+      } else {
+        // Input already empty — just navigate with whatever tags are selected.
+        doSearch();
+      }
+      return;
+    }
+    if (e.key === ",") {
+      // Comma adds the tag but does NOT navigate (user is still composing).
       e.preventDefault();
       if (customTagInput.trim()) {
         addTag(customTagInput);
         setCustomTagInput("");
       }
+      return;
     }
     if (e.key === "Backspace" && customTagInput === "" && selectedTags.length > 0) {
       removeTag(selectedTags[selectedTags.length - 1]);
@@ -106,18 +185,7 @@ export default function Navbar({
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    setTagDropdownOpen(false);
-    if (isTagMode) {
-      const allTags = [...selectedTags];
-      if (customTagInput.trim()) allTags.push(normalizeTag(customTagInput));
-      if (allTags.length > 0) {
-        router.push(`/search?tags=${encodeURIComponent(allTags.join(","))}&category=${category}`);
-      }
-    } else {
-      const q = searchQuery.trim();
-      if (!q) return;
-      router.push(`/search?q=${encodeURIComponent(q)}&category=${category}`);
-    }
+    doSearch();
   }
 
   return (
@@ -268,10 +336,18 @@ export default function Navbar({
       {showAuth ? (
         <div className={styles.navRight}>
           <ThemeToggle />
-          <Link href="/login" className={styles.navLink}>Login</Link>
-          <Link href="/signUp">
-            <button className={styles.signUpBtn}>Create Account</button>
-          </Link>
+          {!authLoading && (
+            user ? (
+              <ProfileDropdown onSignOut={signOut} />
+            ) : (
+              <>
+                <Link href="/login" className={styles.navLink}>Login</Link>
+                <Link href="/signUp">
+                  <button className={styles.signUpBtn}>Create Account</button>
+                </Link>
+              </>
+            )
+          )}
         </div>
       ) : (
         <div className={styles.navRight}>

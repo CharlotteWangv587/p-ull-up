@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import styles from "./profile-dropdown.module.css";
+import { useAuth } from "@/context/auth";
 
 const UserIcon = () => (
   <svg
@@ -29,6 +30,8 @@ type ProfileDropdownProps = {
  * Wire onSignOut to your auth context as needed.
  */
 export default function ProfileDropdown({ onSignOut }: ProfileDropdownProps) {
+  const { signOut } = useAuth();
+  const handleSignOut = onSignOut ?? signOut;
   const [open, setOpen] = useState(false);
 
   const close = () => setOpen(false);
@@ -68,7 +71,7 @@ export default function ProfileDropdown({ onSignOut }: ProfileDropdownProps) {
             href="/"
             className={styles.dropdownLink}
             role="menuitem"
-            onClick={() => { close(); onSignOut?.(); }}
+            onClick={() => { close(); handleSignOut(); }}
           >
             Sign out
           </Link>
