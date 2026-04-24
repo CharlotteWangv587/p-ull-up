@@ -22,10 +22,11 @@ const SEARCH_CATEGORIES: { value: SearchCategory; label: string; placeholder: st
 export const CAMPUS_TAGS = ["Pomona", "CMC", "Pitzer", "Scripps", "HMC", "All 5Cs"];
 
 export const TIME_OPTIONS = [
-  "This weekend",
-  "Within 7 days",
-  "Next weekend",
-  "Within 30 days",
+  "Today",
+  "In 3 days",
+  "This Weekend",
+  "Next Week",
+  "In 30 days",
   "All upcoming",
 ];
 
@@ -58,7 +59,7 @@ export default function Navbar({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [customTagInput, setCustomTagInput] = useState("");
   const [tagDropdownOpen, setTagDropdownOpen] = useState(false);
-  const [selectedTime, setSelectedTime] = useState("Within 7 days");
+  const [selectedTime, setSelectedTime] = useState("All upcoming");
   const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
@@ -94,48 +95,22 @@ export default function Navbar({
     else addTag(tag);
   }
 
-  function timeOptionToDateRange(option: string): { start_after: string; start_before?: string } {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    function addDays(d: Date, n: number): Date {
-      const r = new Date(d);
-      r.setDate(r.getDate() + n);
-      return r;
-    }
-
-    function nextSaturday(from: Date): Date {
-      const day = from.getDay();
-      const daysToSat = day === 6 ? 7 : (6 - day + 7) % 7 || 7;
-      return addDays(from, daysToSat);
-    }
-
+  function timeOptionToDateFilter(option: string): string {
     switch (option) {
-      case "This weekend": {
-        const sat = nextSaturday(today);
-        return { start_after: sat.toISOString(), start_before: addDays(sat, 2).toISOString() };
-      }
-      case "Within 7 days":
-        return { start_after: today.toISOString(), start_before: addDays(today, 7).toISOString() };
-      case "Next weekend": {
-        const sat = nextSaturday(addDays(today, 7));
-        return { start_after: sat.toISOString(), start_before: addDays(sat, 2).toISOString() };
-      }
-      case "Within 30 days":
-        return { start_after: today.toISOString(), start_before: addDays(today, 30).toISOString() };
-      default: // "All upcoming"
-        return { start_after: today.toISOString() };
+      case "Today":        return "today";
+      case "In 3 days":   return "in3";
+      case "This Weekend": return "weekend";
+      case "Next Week":    return "next_week";
+      case "In 30 days":  return "month";
+      default:             return "all";
     }
   }
 
-  // Navigate to /search with the given tags (or current selectedTags) + current filters.
-  // Accepts an explicit tags array so callers can pass freshly-computed state
-  // without waiting for a React re-render.
   function doSearch(explicitTags?: string[]) {
     setTagDropdownOpen(false);
-    const { start_after, start_before } = timeOptionToDateRange(selectedTime);
-    const params = new URLSearchParams({ category, start_after });
-    if (start_before) params.set("start_before", start_before);
+    const dateFilter = timeOptionToDateFilter(selectedTime);
+    const params = new URLSearchParams({ category });
+    if (dateFilter !== "all") params.set("date_filter", dateFilter);
 
     if (isTagMode) {
       const allTags = explicitTags ?? [

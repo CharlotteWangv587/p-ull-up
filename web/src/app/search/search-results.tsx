@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import EventCard from "@/components/EventCard/event-card";
 import styles from "./search.module.css";
 
@@ -10,7 +9,7 @@ import styles from "./search.module.css";
 type DateSort       = "none" | "soonest" | "latest";
 type PopularitySort = "none" | "most_interested" | "least_interested" | "most_going" | "least_going";
 type CampusFilter   = "all" | "pomona" | "cmc" | "scripps" | "mudd" | "pitzer" | "off_campus" | "other";
-type DateFilter     = "all" | "today" | "in3" | "in5" | "weekend" | "next_week" | "month";
+type DateFilter     = "all" | "today" | "in3" | "weekend" | "next_week" | "month";
 
 type ApiEvent = {
   id: string;
@@ -65,7 +64,6 @@ const DATE_FILTERS: { value: DateFilter; label: string }[] = [
   { value: "all",       label: "All dates"    },
   { value: "today",     label: "Today"        },
   { value: "in3",       label: "In 3 days"    },
-  { value: "in5",       label: "In 5 days"    },
   { value: "weekend",   label: "This weekend" },
   { value: "next_week", label: "Next week"    },
   { value: "month",     label: "This month"   },
@@ -132,19 +130,14 @@ type SearchResultsProps = {
   query: string;
   category: string;
   tags: string;
-  startAfter: string;
-  startBefore: string;
+  initialDateFilter?: string;
 };
 
-// Convert a DateFilter pill to ISO date bounds for the API.
-// When "all", returns undefined so the navbar's startAfter/startBefore take effect.
 function dateFilterToApiRange(
   filter: DateFilter,
-  fallbackAfter: string,
-  fallbackBefore: string,
 ): { start_after: string; start_before?: string } {
   if (filter === "all") {
-    return { start_after: fallbackAfter || new Date().toISOString(), start_before: fallbackBefore || undefined };
+    return { start_after: new Date().toISOString() };
   }
   const today = startOfDay(new Date());
   const iso = (d: Date) => d.toISOString();
@@ -153,8 +146,6 @@ function dateFilterToApiRange(
     return { start_after: iso(today), start_before: iso(addDays(today, 1)) };
   if (filter === "in3")
     return { start_after: iso(today), start_before: iso(addDays(today, 4)) };
-  if (filter === "in5")
-    return { start_after: iso(today), start_before: iso(addDays(today, 6)) };
   if (filter === "weekend") {
     const day = today.getDay();
     const sat = addDays(today, day === 6 ? 0 : (6 - day + 7) % 7);
@@ -171,35 +162,34 @@ function dateFilterToApiRange(
       start_before: iso(new Date(today.getFullYear(), today.getMonth() + 1, 1)),
     };
   }
-  return { start_after: fallbackAfter || new Date().toISOString() };
+  return { start_after: new Date().toISOString() };
+}
+
+function toValidDateFilter(raw: string): DateFilter {
+  const valid: DateFilter[] = ["all", "today", "in3", "weekend", "next_week", "month"];
+  return valid.includes(raw as DateFilter) ? (raw as DateFilter) : "all";
 }
 
 export default function SearchResults({
   query,
   category,
   tags,
-  startAfter,
-  startBefore,
+  initialDateFilter = "all",
 }: SearchResultsProps) {
   const [allEvents,      setAllEvents]      = useState<DisplayEvent[]>([]);
   const [loading,        setLoading]        = useState(true);
   const [fetchError,     setFetchError]     = useState<string | null>(null);
   const [dateSort,       setDateSort]       = useState<DateSort>("none");
   const [popularitySort, setPopularitySort] = useState<PopularitySort>("none");
-  // campusFilter and dateFilter drive real API refetches when changed
   const [campusFilter,   setCampusFilter]   = useState<CampusFilter>("all");
-  const [dateFilter,     setDateFilter]     = useState<DateFilter>("all");
+  const [dateFilter,     setDateFilter]     = useState<DateFilter>(toValidDateFilter(initialDateFilter));
 
   useEffect(() => {
     async function fetchEvents() {
       setLoading(true);
       setFetchError(null);
       try {
-        const { start_after, start_before } = dateFilterToApiRange(
-          dateFilter,
-          startAfter,
-          startBefore,
-        );
+        const { start_after, start_before } = dateFilterToApiRange(dateFilter);
         const params = new URLSearchParams({ category });
         if (query)        params.set("q",            query);
         if (tags)         params.set("tags",          tags);
@@ -224,7 +214,7 @@ export default function SearchResults({
     }
     fetchEvents();
     // campusFilter and dateFilter are now included — changing them refetches
-  }, [query, category, tags, startAfter, startBefore, campusFilter, dateFilter]);
+  }, [query, category, tags, campusFilter, dateFilter]);
 
   const results = useMemo(() => {
     let pool = allEvents;
@@ -265,37 +255,18 @@ export default function SearchResults({
     setDateFilter("all");
   }
 
-  const displayQuery = query || tags.split(",").filter(Boolean).map((t) => `#${t}`).join(" ");
-
   return (
     <>
-      {/* ── Page header ── */}
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.title}>
-            {displayQuery ? (
-              <>
-                Results for{" "}
-                <span className={styles.queryHighlight}>&ldquo;{displayQuery}&rdquo;</span>
-              </>
-            ) : (
-              "Browse all events"
-            )}
-          </h1>
-          <p className={styles.resultCount}>
-            {loading
-              ? "Loading…"
-              : fetchError
-              ? fetchError
-              : results.length === 0
-              ? "No events found"
-              : `${results.length} event${results.length === 1 ? "" : "s"}`}
-          </p>
-        </div>
-        <Link href="/eventposting" className={styles.createLink}>
-          Create event
-        </Link>
-      </div>
+      {/* ── Result count ── */}
+      <p className={styles.resultCount}>
+        {loading
+          ? "Loading…"
+          : fetchError
+          ? fetchError
+          : results.length === 0
+          ? "No events found"
+          : `${results.length} event${results.length === 1 ? "" : "s"}`}
+      </p>
 
       {/* ── Filter toolbar ── */}
       <div className={styles.toolbar}>

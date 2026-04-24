@@ -1,32 +1,25 @@
 .page {
   min-height: 100vh;
-  background: var(--bg-light);
   color: var(--text-dark);
 }
 
-.wrap {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 32px 18px 80px;
-  display: grid;
-  gap: 0;
-}
-
-/* ── Page header ── */
-.header {
+/* ── Hero header ── */
+.heroContent {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 24px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 48px 18px 20px 18px;
 }
 
 .title {
-  font-size: 30px;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
   letter-spacing: -0.03em;
-  font-weight: 900;
-  color: #1f2937;
-  margin: 0 0 4px;
+  color: #ffffff;
+  margin: 0;
 }
 
 .queryHighlight {
@@ -36,28 +29,46 @@
   background-clip: text;
 }
 
-.resultCount {
-  margin: 0;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: #9ca3af;
-}
-
 .createLink {
-  flex-shrink: 0;
-  padding: 11px 18px;
+  padding: 11px 20px;
   border-radius: 999px;
-  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--gradient-end);
   font-weight: 900;
-  font-size: 13.5px;
+  border: 2px solid var(--gradient-end);
+  white-space: nowrap;
   text-decoration: none;
-  box-shadow: 0 8px 20px rgba(151, 51, 238, 0.22);
-  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+  transition: background 0.15s, box-shadow 0.15s;
 }
 
 .createLink:hover {
-  opacity: 0.9;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(151, 51, 238, 0.2);
+}
+
+/* ── Search bar section ── */
+.searchSection {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 18px 48px 18px;
+}
+
+/* ── Content area ── */
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 18px 80px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Result count ── */
+.resultCount {
+  margin: 0 0 16px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* ── Toolbar row (dropdowns + clear) ── */
@@ -72,64 +83,66 @@
 .toolbarLabel {
   font-size: 12px;
   font-weight: 800;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
-/* Shared pill dropdown — used for Date, Popularity, and Campus */
+/* Pill dropdowns */
 .filterSelect {
   height: 36px;
   padding: 0 32px 0 14px;
   border-radius: 999px;
-  border: 1.5px solid rgba(151, 51, 238, 0.22);
-  background: #ffffff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%239ca3af'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%23ffffff'/%3E%3C/svg%3E") no-repeat right 12px center;
   -webkit-appearance: none;
   appearance: none;
   font-size: 13px;
   font-weight: 700;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.8);
   cursor: pointer;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .filterSelect:hover {
-  border-color: rgba(151, 51, 238, 0.45);
+  border-color: rgba(218, 34, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .filterSelect:focus {
-  border-color: #9733ee;
-  box-shadow: 0 0 0 3px rgba(151, 51, 238, 0.1);
+  border-color: #da22ff;
+  box-shadow: 0 0 0 3px rgba(218, 34, 255, 0.15);
 }
 
-/* Active state — a non-default option is selected */
 .filterSelectActive {
-  border-color: #9733ee;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%239733ee'/%3E%3C/svg%3E");
-  background-color: rgba(151, 51, 238, 0.06);
-  color: #5b2e9f;
+  border-color: #da22ff;
+  background-color: rgba(218, 34, 255, 0.18);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%23da22ff'/%3E%3C/svg%3E");
+  color: #f0c0ff;
 }
 
 .clearBtn {
-  background: none;
-  border: 1.5px solid #e5e7eb;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   border-radius: 999px;
   height: 36px;
   padding: 0 14px;
   font-size: 12.5px;
   font-weight: 700;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.65);
   cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
   white-space: nowrap;
 }
 
 .clearBtn:hover {
-  border-color: #9ca3af;
-  color: #374151;
+  border-color: rgba(218, 34, 255, 0.5);
+  color: #f0c0ff;
+  background: rgba(218, 34, 255, 0.12);
 }
 
 /* ── "When" date filter pills ── */
@@ -160,31 +173,34 @@
   height: 32px;
   padding: 0 13px;
   border-radius: 999px;
-  border: 1.5px solid rgba(151, 51, 238, 0.22);
-  background: #ffffff;
-  color: #5b2e9f;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
+  backdrop-filter: blur(6px);
   transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
   letter-spacing: 0.01em;
 }
 
 .whenPill:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(151, 51, 238, 0.15);
+  border-color: rgba(218, 34, 255, 0.45);
+  color: #f0c0ff;
+  box-shadow: 0 6px 14px rgba(151, 51, 238, 0.2);
 }
 
 .whenPillActive {
   background: linear-gradient(45deg, #da22ff, #9733ee);
   border-color: transparent;
   color: #ffffff;
-  box-shadow: 0 8px 18px rgba(151, 51, 238, 0.28);
+  box-shadow: 0 8px 18px rgba(151, 51, 238, 0.35);
 }
 
 .whenPillActive:hover {
-  box-shadow: 0 10px 22px rgba(151, 51, 238, 0.35);
+  box-shadow: 0 10px 22px rgba(151, 51, 238, 0.45);
 }
 
 /* ── Results grid ── */
@@ -203,13 +219,13 @@
 .emptyTitle {
   font-size: 18px;
   font-weight: 800;
-  color: #374151;
+  color: rgba(255, 255, 255, 0.85);
   margin: 0 0 8px;
 }
 
 .emptyHint {
   font-size: 14px;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.45);
   font-weight: 600;
   margin: 0;
 }
@@ -220,14 +236,14 @@
   padding: 0;
   font-size: 14px;
   font-weight: 700;
-  color: #9733ee;
+  color: #da22ff;
   cursor: pointer;
   text-decoration: underline;
 }
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
-  .header {
+  .heroContent {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -243,67 +259,4 @@
   .toolbarLabel {
     display: none;
   }
-}
-
-/* ════════════════════════════════
-   DARK MODE
-   ════════════════════════════════ */
-
-:global(html.dark) .page {
-  background: #1a1825;
-  color: #e8e8f0;
-}
-
-:global(html.dark) .title {
-  color: #f0f0f8;
-}
-
-:global(html.dark) .resultCount {
-  color: rgba(200, 180, 255, 0.55);
-}
-
-:global(html.dark) .filterSelect {
-  background-color: rgba(255,255,255,0.06);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%23a78bfa'/%3E%3C/svg%3E");
-  border-color: rgba(151, 51, 238, 0.3);
-  color: rgba(220, 210, 255, 0.8);
-}
-
-:global(html.dark) .filterSelect:hover {
-  border-color: rgba(218, 34, 255, 0.5);
-}
-
-:global(html.dark) .filterSelectActive {
-  background-color: rgba(151, 51, 238, 0.18);
-  border-color: #9733ee;
-  color: #d8b4fe;
-}
-
-:global(html.dark) .clearBtn {
-  border-color: rgba(151, 51, 238, 0.25);
-  color: rgba(200, 180, 255, 0.7);
-  background: transparent;
-}
-
-:global(html.dark) .clearBtn:hover {
-  border-color: rgba(218, 34, 255, 0.5);
-  color: #d8b4fe;
-}
-
-:global(html.dark) .whenPill {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(151, 51, 238, 0.3);
-  color: #c4b5fd;
-}
-
-:global(html.dark) .whenPill:hover {
-  box-shadow: 0 6px 14px rgba(151, 51, 238, 0.2);
-}
-
-:global(html.dark) .emptyTitle {
-  color: #e8e8f0;
-}
-
-:global(html.dark) .emptyHint {
-  color: rgba(200, 180, 255, 0.55);
 }

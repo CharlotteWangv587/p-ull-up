@@ -78,7 +78,7 @@ export default function PersonalizedDashboardPage() {
       <section className={styles.eventsSection}>
         <div className={styles.sectionHeader}>
           <h2>Events near you...</h2>
-          <Link href="/events" className={styles.seeMore}>
+          <Link href="/search" className={styles.seeMore}>
             See more events... →
           </Link>
         </div>

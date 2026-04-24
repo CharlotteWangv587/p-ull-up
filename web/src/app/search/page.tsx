@@ -1,6 +1,4 @@
-import Navbar from "@/components/Navbar/navbar";
-import SearchResults from "./search-results";
-import styles from "./search.module.css";
+import SearchPageClient from "./search-page-client";
 
 export default async function SearchPage({
   searchParams,
@@ -9,35 +7,22 @@ export default async function SearchPage({
     q?: string;
     category?: string;
     tags?: string;
-    start_after?: string;
-    start_before?: string;
+    date_filter?: string;
   }>;
 }) {
   const {
     q = "",
     category = "keyword",
     tags = "",
-    start_after = "",
-    start_before = "",
+    date_filter = "all",
   } = await searchParams;
 
   return (
-    <div className={styles.page}>
-      <Navbar />
-      <main className={styles.wrap}>
-        {/*
-          key forces a full remount when query/category changes so local
-          filter state (sort, date window) resets to defaults on each new search.
-        */}
-        <SearchResults
-          key={`${q}-${category}-${tags}-${start_after}`}
-          query={q}
-          category={category}
-          tags={tags}
-          startAfter={start_after}
-          startBefore={start_before}
-        />
-      </main>
-    </div>
+    <SearchPageClient
+      query={q}
+      category={category}
+      tags={tags}
+      initialDateFilter={date_filter}
+    />
   );
 }

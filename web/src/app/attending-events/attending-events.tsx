@@ -46,7 +46,7 @@ export default function AttendingEventsPage() {
       events={ATTENDING_EVENTS}
       emptyMessage="Events you're going to will appear here."
       emptyActionLabel="Browse events"
-      emptyActionHref="/events"
+      emptyActionHref="/search"
     />
   );
 }

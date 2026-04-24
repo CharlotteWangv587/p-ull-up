@@ -81,7 +81,7 @@ export function AnimatedHero() {
               className="gap-3 border border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white backdrop-blur-sm font-bold"
               asChild
             >
-              <Link href="/events">
+              <Link href="/search">
                 See events near me <MoveRight className="w-4 h-4" />
               </Link>
             </Button>

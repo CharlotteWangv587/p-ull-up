@@ -45,7 +45,7 @@ export default function LikedEventsPage() {
       events={LIKED_EVENTS}
       emptyMessage="Events you like will appear here. Start exploring!"
       emptyActionLabel="Browse events"
-      emptyActionHref="/events"
+      emptyActionHref="/search"
     />
   );
 }
