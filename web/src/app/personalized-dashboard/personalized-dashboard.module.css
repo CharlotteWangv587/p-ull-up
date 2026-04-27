@@ -1,0 +1,67 @@
+.myEventWrap {
+  position: relative;
+}
+
+.editBadge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(151, 51, 238, 0.85);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s ease;
+  z-index: 2;
+}
+
+.editBadge:hover {
+  background: rgba(151, 51, 238, 1);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 24px 0 8px;
+}
+
+.emptyText {
+  font-size: 15px;
+  color: #6b7280;
+  font-weight: 500;
+  margin: 0;
+}
+
+.emptyAction {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gradient-end);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+
+.emptyAction:hover {
+  opacity: 0.75;
+}
+
+/* ════════════════════════════════
+   DARK MODE
+   ════════════════════════════════ */
+
+:global(html.dark) .emptyText {
+  color: rgba(220, 210, 255, 0.55);
+}
+
+:global(html.dark) .emptyAction {
+  color: #c084fc;
+}
+
+:global(html.dark) .editBadge {
+  background: rgba(151, 51, 238, 0.7);
+}

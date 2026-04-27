@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar/navbar";
 import { useAuth } from "@/context/auth";
 import NotificationButton from "@/components/NotificationButton/notification-button";
@@ -14,48 +15,26 @@ import { CAMPUS_TAGS, TIME_OPTIONS } from "@/components/Navbar/navbar";
 import { getCampusColor } from "@/lib/campus";
 import styles from "./events.module.css";
 
-const mockEvents = [
-  {
-    id: "1",
-    title: "Afrofusion",
-    subTitle: "Dom's Lounge",
-    tags: ["pomona", "party", "on campus", "afrobeats"],
-    dateText: "Sat, Apr 11",
-    timeText: "11:00 PM–1:00 AM",
-    interestedCount: 47,
-    goingCount: 76,
-  },
-  {
-    id: "2",
-    title: "Nochella",
-    subTitle: "Walker Beach",
-    tags: ["pitzer", "music", "food", "outdoors", "vendors", "concert"],
-    dateText: "Saturday, Apr 11",
-    timeText: "3:00 PM - 10:00 PM",
-    interestedCount: 269,
-    goingCount: 113,
-  },
-  {
-    id: "3",
-    title: "Beginner Daze 5C Surf Club x POCO",
-    subTitle: "Santa Monica",
-    tags: ["all 5cs", "surfing", "outdoors", "off campus"],
-    dateText: "Sunday, Apr 19",
-    timeText: "9:00 AM - 4:00 PM",
-    interestedCount: 25,
-    goingCount: 14,
-  },
-  {
-    id: "4",
-    title: "Techstars Mixer",
-    subTitle: "DTLA",
-    tags: ["cmc", "networking", "startup"],
-    dateText: "Thu, Apr 24",
-    timeText: "6:00 PM",
-    interestedCount: 31,
-    goingCount: 18,
-  },
-] as const;
+type ApiEvent = {
+  id: string;
+  title: string;
+  location_name: string;
+  start_time: string;
+  end_time: string | null;
+  interested_count: number;
+  going_count: number;
+};
+
+function fmtDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", {
+    weekday: "short", month: "short", day: "numeric",
+  });
+}
+function fmtTime(start: string, end: string | null) {
+  const fmt = (s: string) =>
+    new Date(s).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  return end ? `${fmt(start)}–${fmt(end)}` : fmt(start);
+}
 
 type SearchCategory = "keyword" | "event" | "campus";
 
@@ -339,6 +318,15 @@ function EventsSearchBar() {
 // ── Page ───────────────────────────────────────────────────────────────────────
 function EventsPageInner() {
   const { signOut } = useAuth();
+  const [events, setEvents] = useState<ApiEvent[]>([]);
+
+  useEffect(() => {
+    fetch("/api/events")
+      .then((r) => r.json())
+      .then((data) => { if (data.ok) setEvents(data.events); })
+      .catch(console.error);
+  }, []);
+
   return (
     <AnimatedPageBackground>
       <div className={styles.page}>
@@ -367,20 +355,24 @@ function EventsPageInner() {
 
         <main className={styles.wrap}>
           <div className={styles.grid}>
-            {mockEvents.map((e) => (
+            {events.map((e) => (
               <EventCard
                 key={e.id}
                 title={e.title}
-                subTitle={e.subTitle}
-                tags={e.tags.map((t) => ({ id: `${e.id}-${t}`, label: `#${t}`, accentColor: getCampusColor(t) }))}
-                dateText={e.dateText}
-                timeText={e.timeText}
-                interestedCount={e.interestedCount}
-                goingCount={e.goingCount}
+                subTitle={e.location_name}
+                dateText={fmtDate(e.start_time)}
+                timeText={fmtTime(e.start_time, e.end_time)}
+                interestedCount={e.interested_count}
+                goingCount={e.going_count}
                 ctaLabel="View Event"
                 href={`/events/${e.id}`}
               />
             ))}
+            {events.length === 0 && (
+              <p style={{ color: "#9ca3af", gridColumn: "1/-1", padding: "24px 0" }}>
+                No upcoming events yet.
+              </p>
+            )}
           </div>
         </main>
       </div>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { supabasePublic } from "@/lib/supabase";
+import { supabasePublic, supabaseAuthed } from "@/lib/supabase";
+import { requireUser, UnauthorizedError } from "@/lib/auth";
 
 // Campus name → location_name search terms
 const CAMPUS_TERMS: Record<string, string[]> = {
@@ -88,4 +89,50 @@ export async function GET(request: NextRequest) {
   }));
 
   return NextResponse.json({ ok: true, events });
+}
+
+// POST /api/events — create a new event (auth required)
+export async function POST(request: NextRequest) {
+  try {
+    const userId = await requireUser(request);
+    const tok = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+
+    const body = await request.json();
+    const { title, description, start_time, end_time, location_name } = body;
+
+    if (!title?.trim() || !start_time || !location_name?.trim()) {
+      return NextResponse.json(
+        { ok: false, error: "title, start_time, and location_name are required" },
+        { status: 400 }
+      );
+    }
+
+    const { data, error } = await supabaseAuthed(tok)
+      .from("events")
+      .insert({
+        title: title.trim(),
+        description: description?.trim() || null,
+        start_time,
+        end_time: end_time || null,
+        location_name: location_name.trim(),
+        lat: 0,
+        lng: 0,
+        dedupe_key: crypto.randomUUID(),
+        created_by: userId,
+      })
+      .select("id")
+      .single();
+
+    if (error) {
+      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ ok: true, id: data.id }, { status: 201 });
+  } catch (err) {
+    if (err instanceof UnauthorizedError) {
+      return NextResponse.json({ ok: false, error: err.message }, { status: 401 });
+    }
+    console.error("[POST /api/events]", err);
+    return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });
+  }
 }

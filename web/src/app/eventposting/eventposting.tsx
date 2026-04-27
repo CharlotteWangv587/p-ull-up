@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './eventposting.module.css';
 import Navbar from '@/components/Navbar/navbar';
 import NotificationButton from '@/components/NotificationButton/notification-button';
@@ -11,16 +12,30 @@ import TagButton from '@/components/TagButton/tag-button';
 import AnimatedPageBackground from '@/components/AnimatedPageBackground/animated-page-background';
 import { CAMPUS_TAGS, getCampusColor } from '@/lib/campus';
 import { normalizeTag } from '@/components/TagInput/tag-input';
+import { useAuth } from '@/context/auth';
 
 export default function EventPosting() {
+  const { user, session, loading: authLoading, signOut } = useAuth();
+  const router = useRouter();
+
   const [tbdChecked, setTbdChecked] = useState(false);
   const [allowWaitlist, setAllowWaitlist] = useState(false);
   const [eventName, setEventName] = useState('');
   const [eventDate, setEventDate] = useState('');
   const [eventTime, setEventTime] = useState('');
   const [eventLocation, setEventLocation] = useState('');
+  const [description, setDescription] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [campusAffiliation, setCampusAffiliation] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Redirect non-logged-in users to login
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/login');
+    }
+  }, [authLoading, user, router]);
 
   const dateText = tbdChecked
     ? 'Date/Time TBD'
@@ -41,13 +56,73 @@ export default function EventPosting() {
         })
       : undefined;
 
-  // Build preview tags — campus first so it appears prominently
   const previewTags = [
     ...(campusAffiliation
       ? [{ id: `campus-${campusAffiliation}`, label: `#${campusAffiliation}`, accentColor: getCampusColor(normalizeTag(campusAffiliation)) }]
       : []),
     ...selectedTags.map((t) => ({ id: t, label: `#${t}`, accentColor: getCampusColor(t) })),
   ];
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!session) return;
+
+    setError(null);
+
+    if (!eventName.trim()) { setError('Event name is required.'); return; }
+    if (!eventLocation.trim()) { setError('Location is required.'); return; }
+    if (!tbdChecked && (!eventDate || !eventTime)) {
+      setError('Please set a date and time, or check TBD.');
+      return;
+    }
+
+    let startTime: string;
+    if (tbdChecked) {
+      // Placeholder: one year from now
+      startTime = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+    } else {
+      startTime = new Date(`${eventDate}T${eventTime}`).toISOString();
+    }
+
+    // Build a searchable description: user text + appended tags
+    const allTags = [
+      ...(campusAffiliation ? [campusAffiliation] : []),
+      ...selectedTags,
+    ];
+    const tagSuffix = allTags.length > 0 ? `\n\n${allTags.map((t) => `#${t}`).join(' ')}` : '';
+    const fullDescription = description.trim() + tagSuffix;
+
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/events', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: eventName.trim(),
+          description: fullDescription || null,
+          start_time: startTime,
+          location_name: eventLocation.trim(),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? 'Failed to create event.');
+        return;
+      }
+
+      router.push(`/events/${data.id}`);
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (authLoading) return null;
 
   return (
     <AnimatedPageBackground>
@@ -58,7 +133,7 @@ export default function EventPosting() {
         rightContent={
           <>
             <NotificationButton />
-            <ProfileDropdown />
+            <ProfileDropdown onSignOut={signOut} />
           </>
         }
       />
@@ -67,7 +142,9 @@ export default function EventPosting() {
 
           <h1 className={styles.heading}>Create event</h1>
 
-          <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+          <form className={styles.form} onSubmit={handleSubmit}>
+
+            {error && <p style={{ color: 'red', marginBottom: 12 }}>{error}</p>}
 
             {/* Event Name */}
             <div className={styles.field}>
@@ -78,6 +155,7 @@ export default function EventPosting() {
                 placeholder="Name your event"
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
+                required
               />
             </div>
 
@@ -126,10 +204,11 @@ export default function EventPosting() {
                 placeholder="City, venue, or address"
                 value={eventLocation}
                 onChange={(e) => setEventLocation(e.target.value)}
+                required
               />
             </div>
 
-            {/* Campus Affiliation (single select) */}
+            {/* Campus Affiliation */}
             <div className={styles.field}>
               <label className={styles.label}>Campus affiliation</label>
               <div className={styles.campusRow}>
@@ -148,7 +227,7 @@ export default function EventPosting() {
               </div>
             </div>
 
-            {/* Keywords (formerly Tags) */}
+            {/* Keywords */}
             <div className={styles.field}>
               <label className={styles.label}>Keywords</label>
               <TagInput
@@ -170,7 +249,12 @@ export default function EventPosting() {
             {/* Description */}
             <div className={styles.field}>
               <label className={styles.label}>Description</label>
-              <textarea className={`${styles.input} ${styles.textarea}`} placeholder="Description…" />
+              <textarea
+                className={`${styles.input} ${styles.textarea}`}
+                placeholder="Description…"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </div>
 
             {/* Photo / Poster */}
@@ -210,7 +294,9 @@ export default function EventPosting() {
               Allow waitlist / drop-in check-in
             </label>
 
-            <button type="submit" className={styles.submitBtn}>POST EVENT</button>
+            <button type="submit" className={styles.submitBtn} disabled={submitting}>
+              {submitting ? 'POSTING…' : 'POST EVENT'}
+            </button>
 
           </form>
         </div>
