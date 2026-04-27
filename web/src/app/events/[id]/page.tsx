@@ -2,11 +2,11 @@ import { notFound } from "next/navigation";
 import { supabasePublic } from "@/lib/supabase";
 import EventDetails from "./event-details";
 
-function formatTime(start: string, end?: string | null): string {
-  const dateStr = new Date(start).toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
+function formatTime(start: string | null, isTimeTbd: boolean, end?: string | null) {
+  if (isTimeTbd || !start) return "Date / Time TBD";
+  const date = new Date(start);
+  const dateStr = date.toLocaleDateString("en-US", {
+    weekday: "short", month: "short", day: "numeric",
   });
   const fmt = (iso: string) =>
     new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
@@ -20,30 +20,41 @@ export default async function EventDetailsPage({
 }) {
   const { id } = await params;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: event } = await (supabasePublic as any)
     .from("events")
     .select(
-      "id, title, description, start_time, end_time, location_name, created_by, event_saves(count), event_joins(count)"
+      `id, title, photo_url, location_name,
+       start_time, end_time, is_time_tbd,
+       cost_text, description, created_by,
+       campus_affiliation, keywords,
+       meetup_location_name, spots, allow_waitlist,
+       event_saves(count), event_joins(count)`
     )
     .eq("id", id)
-    .single();
+    .maybeSingle();
 
   if (!event) notFound();
+
+  // Merge campus affiliations and keywords into the tags array for display
+  const tags: string[] = [
+    ...((event.campus_affiliation as string[]) ?? []),
+    ...((event.keywords as string[]) ?? []),
+  ];
 
   return (
     <EventDetails
       event={{
-        id: event.id,
-        title: event.title,
-        posterUrl: null,
-        location: event.location_name,
-        time: formatTime(event.start_time, event.end_time),
-        tags: [],
-        details: event.description ?? "",
+        id:             event.id,
+        title:          event.title,
+        posterUrl:      event.photo_url ?? null,
+        location:       event.location_name,
+        time:           formatTime(event.start_time, event.is_time_tbd ?? false, event.end_time),
+        price:          event.cost_text ?? null,
+        tags,
+        details:        event.description ?? "",
         interestedCount: event.event_saves?.[0]?.count ?? 0,
-        goingCount: event.event_joins?.[0]?.count ?? 0,
-        creatorId: event.created_by ?? undefined,
+        goingCount:      event.event_joins?.[0]?.count ?? 0,
+        creatorId:      event.created_by ?? undefined,
       }}
     />
   );

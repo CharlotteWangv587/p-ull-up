@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Navbar from "@/components/Navbar/navbar";
 import TagButton from "@/components/TagButton/tag-button";
 import RsvpButton from "@/components/RsvpButton/rsvp-button";
@@ -11,7 +11,9 @@ import ProfileDropdown from "@/components/ProfileDropdown/profile-dropdown";
 import { useAuth } from "@/context/auth";
 import { supabasePublic } from "@/lib/supabase";
 import styles from "./event-details.module.css";
-import type { CommentData } from "@/components/Comment/comment";
+import { useRouter } from "next/router";
+import { CommentData } from "@/components/Comment/comment";
+
 
 export type EventDetailsData = {
   id: string;
@@ -36,8 +38,20 @@ export default function EventDetails({ event }: { event: EventDetailsData }) {
   const [saveCount, setSaveCount] = useState(event.interestedCount ?? 0);
   const [joinCount, setJoinCount] = useState(event.goingCount ?? 0);
 
+  // RSVP state: "interested" | "going" | null
+  const [rsvp, setRsvp] = useState<"interested" | "going" | null>(null);
+  const [counts, setCounts] = useState({
+    interested: event.interestedCount ?? 0,
+    going: event.goingCount ?? 0,
+  });
+
   // null = not yet loaded; [] = loaded but empty
   const [comments, setComments] = useState<CommentData[] | null>(null);
+
+  // helper values for CommentSection props
+  const currentUserId = user?.id ?? undefined;
+  const isAdmin = false;
+  const onDeleteComment = handleDeleteComment;
 
   // Load comments once (public endpoint, no auth needed)
   useEffect(() => {
@@ -151,6 +165,7 @@ export default function EventDetails({ event }: { event: EventDetailsData }) {
       <main className={styles.wrap}>
         <div className={styles.split}>
           <div className={styles.leftCol}>
+            {/* 1. TITLE AND META INFO */}
             <header>
               <h1 className={styles.title}>{event.title}</h1>
               <p className={styles.metaLine}>
@@ -158,10 +173,11 @@ export default function EventDetails({ event }: { event: EventDetailsData }) {
                 {" · "}
                 {event.time}
                 {" · "}
-                {priceLabel}
+                {event.price ?? "Free"}
               </p>
             </header>
 
+            {/* TAGS */}
             {event.tags.length > 0 && (
               <section className={styles.block} aria-label="Tags">
                 <h2 className={styles.blockLabel}>Tags</h2>
@@ -173,51 +189,48 @@ export default function EventDetails({ event }: { event: EventDetailsData }) {
               </section>
             )}
 
+            {/* 3. ABOUT THIS EVENT */}
             <section className={styles.block} aria-label="About">
               <h2 className={styles.blockLabel}>About this event</h2>
               <p className={styles.detailsText}>{event.details || "No description provided."}</p>
             </section>
 
+            {/* RSVP */}
             <section className={styles.block} aria-label="RSVP">
               <div className={styles.rsvpRow}>
                 <RsvpButton
                   kind="interested"
-                  active={saved}
-                  count={saveCount}
-                  onClick={toggleSave}
+                  active={rsvp === "interested"}
+                  count={counts.interested}
+                  onClick={() => setRsvp((cur) => (cur === "interested" ? null : "interested"))}
                 />
                 <RsvpButton
                   kind="going"
-                  active={joined}
-                  count={joinCount}
-                  onClick={toggleJoin}
+                  active={rsvp === "going"}
+                  count={counts.going}
+                  onClick={() => setRsvp((cur) => (cur === "going" ? null : "going"))}
                 />
               </div>
-              {!authLoading && !user && (
-                <p className={styles.loginHint}>
-                  <a href="/login">Log in</a> to save or RSVP to this event.
+              {!user && (
+                <p style={{ fontSize: "0.8rem", color: "var(--muted, #888)", marginTop: "0.5rem" }}>
+                  <Link href="/login" style={{ color: "inherit", textDecoration: "underline" }}>
+                    Sign in
+                  </Link>{" "}
+                  to RSVP
                 </p>
               )}
             </section>
 
+            {/* COMMENTS */}
             <section className={styles.block} id="comments" aria-label="Comments">
               <h2 className={styles.blockLabel}>Comments</h2>
-              {isLoggedIn && comments !== null ? (
-                <CommentSection
-                  eventId={event.id}
-                  initialComments={comments}
-                  currentUserId={user.id}
-                  eventCreatorId={event.creatorId}
-                  onPost={handlePostComment}
-                  onDelete={handleDeleteComment}
-                />
-              ) : isLoggedIn ? (
-                <p className={styles.loginHint}>Loading comments…</p>
-              ) : !authLoading ? (
-                <p className={styles.loginHint}>
-                  <a href="/login">Log in</a> to view and post comments.
-                </p>
-              ) : null}
+              <CommentSection
+                eventId={event.id}
+                currentUserId={currentUserId}
+                eventCreatorId={event.creatorId}
+                isAdmin={isAdmin}
+                onDelete={onDeleteComment}
+              />
             </section>
           </div>
 
