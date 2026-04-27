@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './eventposting.module.css';
 import Navbar from '@/components/Navbar/navbar';
 import NotificationButton from '@/components/NotificationButton/notification-button';
@@ -11,24 +12,48 @@ import TagButton from '@/components/TagButton/tag-button';
 import AnimatedPageBackground from '@/components/AnimatedPageBackground/animated-page-background';
 import { CAMPUS_TAGS, getCampusColor } from '@/lib/campus';
 import { normalizeTag } from '@/components/TagInput/tag-input';
+import { useAuth } from '@/context/auth';
 
 export default function EventPosting() {
-  const [tbdChecked, setTbdChecked] = useState(false);
-  const [allowWaitlist, setAllowWaitlist] = useState(false);
-  const [eventName, setEventName] = useState('');
-  const [eventDate, setEventDate] = useState('');
-  const [eventTime, setEventTime] = useState('');
-  const [eventLocation, setEventLocation] = useState('');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [campusAffiliation, setCampusAffiliation] = useState<string | null>(null);
+  const router = useRouter();
+  const { user, session } = useAuth();
 
+  // ── Form state ────────────────────────────────────────────────────────────
+  const [tbdChecked, setTbdChecked]         = useState(false);
+  const [allowWaitlist, setAllowWaitlist]   = useState(false);
+  const [eventName, setEventName]           = useState('');
+  const [eventDate, setEventDate]           = useState('');
+  const [eventTime, setEventTime]           = useState('');
+  const [eventEndTime, setEventEndTime]     = useState('');
+  const [eventLocation, setEventLocation]   = useState('');
+  const [meetupLocation, setMeetupLocation] = useState('');
+  const [description, setDescription]       = useState('');
+  const [costText, setCostText]             = useState('');
+  const [spots, setSpots]                   = useState('');
+  const [keywords, setKeywords]             = useState<string[]>([]);
+  // Multi-select campus affiliations (PDF spec: campus_affiliation text[])
+  const [campusAffiliations, setCampusAffiliations] = useState<string[]>([]);
+
+  // ── Submit state ──────────────────────────────────────────────────────────
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError]           = useState<string | null>(null);
+
+  // ── Campus toggle (multi-select) ──────────────────────────────────────────
+  function toggleCampus(campus: string) {
+    const normalized = normalizeTag(campus);
+    setCampusAffiliations((prev) =>
+      prev.includes(normalized)
+        ? prev.filter((c) => c !== normalized)
+        : [...prev, normalized]
+    );
+  }
+
+  // ── Preview helpers ───────────────────────────────────────────────────────
   const dateText = tbdChecked
     ? 'Date/Time TBD'
     : eventDate
       ? new Date(eventDate).toLocaleDateString(undefined, {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
+          weekday: 'short', month: 'short', day: 'numeric',
         })
       : undefined;
 
@@ -36,18 +61,89 @@ export default function EventPosting() {
     ? undefined
     : eventTime
       ? new Date(`1970-01-01T${eventTime}`).toLocaleTimeString(undefined, {
-          hour: 'numeric',
-          minute: '2-digit',
+          hour: 'numeric', minute: '2-digit',
         })
       : undefined;
 
-  // Build preview tags — campus first so it appears prominently
   const previewTags = [
-    ...(campusAffiliation
-      ? [{ id: `campus-${campusAffiliation}`, label: `#${campusAffiliation}`, accentColor: getCampusColor(normalizeTag(campusAffiliation)) }]
-      : []),
-    ...selectedTags.map((t) => ({ id: t, label: `#${t}`, accentColor: getCampusColor(t) })),
+    ...campusAffiliations.map((c) => ({
+      id: `campus-${c}`,
+      label: `#${c}`,
+      accentColor: getCampusColor(c),
+    })),
+    ...keywords.map((t) => ({ id: t, label: `#${t}`, accentColor: getCampusColor(t) })),
   ];
+
+  // ── Submit ────────────────────────────────────────────────────────────────
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+
+    if (!user || !session) {
+      setError('You must be signed in to post an event.');
+      return;
+    }
+    if (!eventName.trim()) { setError('Event name is required.'); return; }
+    if (!eventLocation.trim()) { setError('Location is required.'); return; }
+    if (!tbdChecked && !eventDate) { setError('Date is required (or check TBD).'); return; }
+    if (!tbdChecked && !eventTime) { setError('Start time is required (or check TBD).'); return; }
+
+    const startTime = tbdChecked
+      ? null
+      : new Date(`${eventDate}T${eventTime}`).toISOString();
+
+    const endTime =
+      !tbdChecked && eventDate && eventEndTime
+        ? new Date(`${eventDate}T${eventEndTime}`).toISOString()
+        : null;
+
+    // campus_affiliation stores values like ["Pomona", "CMC"] — capitalise first letter
+    const campusArray = campusAffiliations.map(
+      (c) => c.charAt(0).toUpperCase() + c.slice(1)
+    );
+
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          title:                eventName.trim(),
+          description:          description.trim() || null,
+          location_name:        eventLocation.trim(),
+          start_time:           startTime,
+          end_time:             endTime,
+          is_time_tbd:          tbdChecked,
+          meetup_location_name: meetupLocation.trim() || null,
+          campus_affiliation:   campusArray,
+          keywords,
+          cost_text:            costText.trim() || null,
+          spots:                spots ? parseInt(spots, 10) : null,
+          allow_waitlist:       allowWaitlist,
+        }),
+      });
+
+      const json = await res.json();
+
+      if (res.status === 409) {
+        setError('An identical event already exists. Please check and try again.');
+        return;
+      }
+      if (!res.ok || !json.ok) {
+        setError(json.error ?? 'Something went wrong. Please try again.');
+        return;
+      }
+
+      router.push(`/events/${json.id}`);
+    } catch {
+      setError('Network error. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <AnimatedPageBackground>
@@ -67,7 +163,7 @@ export default function EventPosting() {
 
           <h1 className={styles.heading}>Create event</h1>
 
-          <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+          <form className={styles.form} onSubmit={handleSubmit}>
 
             {/* Event Name */}
             <div className={styles.field}>
@@ -78,10 +174,11 @@ export default function EventPosting() {
                 placeholder="Name your event"
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
+                required
               />
             </div>
 
-            {/* Date + Time + TBD */}
+            {/* Date + Start Time + End Time + TBD */}
             <div className={styles.row}>
               <div className={styles.field}>
                 <label className={styles.label}>Date</label>
@@ -94,13 +191,25 @@ export default function EventPosting() {
                 />
               </div>
               <div className={styles.field}>
-                <label className={styles.label}>Time</label>
+                <label className={styles.label}>Start time</label>
                 <input
                   className={styles.input}
                   type="time"
                   disabled={tbdChecked}
                   value={eventTime}
                   onChange={(e) => setEventTime(e.target.value)}
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>
+                  End time <span className={styles.optionalTag}>(optional)</span>
+                </label>
+                <input
+                  className={styles.input}
+                  type="time"
+                  disabled={tbdChecked}
+                  value={eventEndTime}
+                  onChange={(e) => setEventEndTime(e.target.value)}
                 />
               </div>
               <div className={styles.field} style={{ flex: '0 0 auto' }}>
@@ -117,7 +226,7 @@ export default function EventPosting() {
               </div>
             </div>
 
-            {/* Location of Event */}
+            {/* Event Location */}
             <div className={styles.field}>
               <label className={styles.label}>Location of event</label>
               <input
@@ -126,10 +235,28 @@ export default function EventPosting() {
                 placeholder="City, venue, or address"
                 value={eventLocation}
                 onChange={(e) => setEventLocation(e.target.value)}
+                required
               />
             </div>
 
-            {/* Campus Affiliation (single select) */}
+            {/* Meetup Location */}
+            <div className={styles.field}>
+              <label className={styles.label}>
+                Location of meetup <span className={styles.optionalTag}>(optional)</span>
+              </label>
+              <div className={styles.inputWithIcon}>
+                <input
+                  className={styles.input}
+                  type="text"
+                  placeholder="Where to meet up before the event"
+                  value={meetupLocation}
+                  onChange={(e) => setMeetupLocation(e.target.value)}
+                />
+                <span className={styles.inputIcon}>📍</span>
+              </div>
+            </div>
+
+            {/* Campus Affiliation (multi-select) */}
             <div className={styles.field}>
               <label className={styles.label}>Campus affiliation</label>
               <div className={styles.campusRow}>
@@ -139,8 +266,8 @@ export default function EventPosting() {
                     <TagButton
                       key={campus}
                       label={`#${campus}`}
-                      selected={campusAffiliation === normalized}
-                      onClick={() => setCampusAffiliation(campusAffiliation === normalized ? null : normalized)}
+                      selected={campusAffiliations.includes(normalized)}
+                      onClick={() => toggleCampus(campus)}
                       accentColor={getCampusColor(normalized)}
                     />
                   );
@@ -148,29 +275,25 @@ export default function EventPosting() {
               </div>
             </div>
 
-            {/* Keywords (formerly Tags) */}
+            {/* Keywords */}
             <div className={styles.field}>
               <label className={styles.label}>Keywords</label>
               <TagInput
-                value={selectedTags}
-                onChange={setSelectedTags}
+                value={keywords}
+                onChange={setKeywords}
                 name="keywords"
               />
-            </div>
-
-            {/* Location of Meetup */}
-            <div className={styles.field}>
-              <label className={styles.label}>Location of meetup</label>
-              <div className={styles.inputWithIcon}>
-                <input className={styles.input} type="text" placeholder="Where to meet up" />
-                <span className={styles.inputIcon}>📍</span>
-              </div>
             </div>
 
             {/* Description */}
             <div className={styles.field}>
               <label className={styles.label}>Description</label>
-              <textarea className={`${styles.input} ${styles.textarea}`} placeholder="Description…" />
+              <textarea
+                className={`${styles.input} ${styles.textarea}`}
+                placeholder="Tell people what to expect…"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </div>
 
             {/* Photo / Poster */}
@@ -190,13 +313,26 @@ export default function EventPosting() {
                 <label className={styles.label}>
                   Cost <span className={styles.optionalTag}>(optional)</span>
                 </label>
-                <input className={styles.input} type="text" placeholder="e.g. $10" />
+                <input
+                  className={styles.input}
+                  type="text"
+                  placeholder="e.g. $10, Free, $5 suggested"
+                  value={costText}
+                  onChange={(e) => setCostText(e.target.value)}
+                />
               </div>
               <div className={styles.field}>
                 <label className={styles.label}>
                   Spots <span className={styles.optionalTag}>(optional)</span>
                 </label>
-                <input className={styles.input} type="number" placeholder="e.g. 20" />
+                <input
+                  className={styles.input}
+                  type="number"
+                  min="1"
+                  placeholder="e.g. 20"
+                  value={spots}
+                  onChange={(e) => setSpots(e.target.value)}
+                />
               </div>
             </div>
 
@@ -210,7 +346,26 @@ export default function EventPosting() {
               Allow waitlist / drop-in check-in
             </label>
 
-            <button type="submit" className={styles.submitBtn}>POST EVENT</button>
+            {/* Error message */}
+            {error && (
+              <p style={{ color: 'var(--error, #e53e3e)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+                {error}
+              </p>
+            )}
+
+            {!user && (
+              <p style={{ color: 'var(--muted, #888)', fontSize: '0.875rem' }}>
+                You must be signed in to post an event.
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={submitting || !user}
+            >
+              {submitting ? 'Posting…' : 'POST EVENT'}
+            </button>
 
           </form>
         </div>

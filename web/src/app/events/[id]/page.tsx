@@ -1,59 +1,17 @@
+import { notFound } from "next/navigation";
+import { supabasePublic } from "@/lib/supabase";
 import EventDetails from "./event-details";
 
-const mockEvents = [
-  {
-    id: "1",
-    title: "Afrofusion",
-    posterUrl: null,
-    location: "Dom's Lounge",
-    time: "Sat, Apr 11 • 11:00 PM–1:00 AM",
-    price: null,
-    tags: ["party", "on campus", "pomona", "afrobeats"],
-    details:
-      "Pull up for Afrofusion at Dom’s Lounge. Expect great music, good energy, and a packed dance floor. Bring friends and come early if you want a better spot.",
-    interestedCount: 47,
-    goingCount: 76,
-  },
-  {
-    id: "2",
-    title: "Nochella",
-    posterUrl: null,
-    location: "Walker Beach",
-    time: "Saturday, Apr 11 • 3:00 PM–10:00 PM",
-    price: "$10",
-    tags: ["music", "food", "outdoors", "vendors", "concert", "tattoos", "flea market"],
-    details:
-      "A campus festival-style day with music, food vendors, pop-ups, and activities. Come hang out, explore booths, and stay for the performances.",
-    interestedCount: 269,
-    goingCount: 113,
-  },
-  {
-    id: "3",
-    title: "Beginner Daze 5C Surf Club x POCO",
-    posterUrl: null,
-    location: "Santa Monica",
-    time: "Sunday, Apr 19 • 9:00 AM–4:00 PM",
-    price: null,
-    tags: ["surfing", "outdoors", "off campus"],
-    details:
-      "Beginner-friendly surf day with coaching and good vibes. We’ll coordinate meetup details and carpooling closer to the date.",
-    interestedCount: 25,
-    goingCount: 14,
-  },
-  {
-    id: "4",
-    title: "Techstars Mixer",
-    posterUrl: null,
-    location: "DTLA",
-    time: "Thu, Apr 24 • 6:00 PM",
-    price: null,
-    tags: ["networking", "startup"],
-    details:
-      "Meet founders, builders, and operators. Light refreshments and lots of people to connect with. Bring a friend and your best intro.",
-    interestedCount: 31,
-    goingCount: 18,
-  },
-] as const;
+function formatTime(start: string | null, isTimeTbd: boolean, end?: string | null) {
+  if (isTimeTbd || !start) return "Date / Time TBD";
+  const date = new Date(start);
+  const dateStr = date.toLocaleDateString("en-US", {
+    weekday: "short", month: "short", day: "numeric",
+  });
+  const fmt = (iso: string) =>
+    new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  return end ? `${dateStr} • ${fmt(start)}–${fmt(end)}` : `${dateStr} • ${fmt(start)}`;
+}
 
 export default async function EventDetailsPage({
   params,
@@ -61,26 +19,43 @@ export default async function EventDetailsPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const event = mockEvents.find((e) => e.id === id) ?? mockEvents[0];
 
-  // ── TODO: replace with real session when auth is wired ───────────────────
-  // e.g. const session = await getServerSession(); currentUserId = session.user.id
-  // "u1" matches the first seed comment author so the Delete button is visible
-  // during development. Remove / replace before shipping.
-  const currentUserId = "u1";
+  const { data: event } = await (supabasePublic as any)
+    .from("events")
+    .select(
+      `id, title, photo_url, location_name,
+       start_time, end_time, is_time_tbd,
+       cost_text, description, created_by,
+       campus_affiliation, keywords,
+       meetup_location_name, spots, allow_waitlist,
+       event_saves(count), event_joins(count)`
+    )
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!event) notFound();
+
+  // Merge campus affiliations and keywords into the tags array for display
+  const tags: string[] = [
+    ...((event.campus_affiliation as string[]) ?? []),
+    ...((event.keywords as string[]) ?? []),
+  ];
 
   return (
     <EventDetails
-      event={event}
-      currentUserId={currentUserId}
-      onDeleteComment={async (commentId) => {
-        "use server";
-        // TODO: swap for a real fetch() call with the user's Bearer token once
-        // auth is wired. The API route is already live at
-        // DELETE /api/comments/:commentId
-        console.log("[mock] delete comment", commentId);
+      event={{
+        id:             event.id,
+        title:          event.title,
+        posterUrl:      event.photo_url ?? null,
+        location:       event.location_name,
+        time:           formatTime(event.start_time, event.is_time_tbd ?? false, event.end_time),
+        price:          event.cost_text ?? null,
+        tags,
+        details:        event.description ?? "",
+        interestedCount: event.event_saves?.[0]?.count ?? 0,
+        goingCount:      event.event_joins?.[0]?.count ?? 0,
+        creatorId:      event.created_by ?? undefined,
       }}
     />
   );
 }
-
