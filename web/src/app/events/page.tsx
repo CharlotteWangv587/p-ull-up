@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
-import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar/navbar";
 import { useAuth } from "@/context/auth";
 import NotificationButton from "@/components/NotificationButton/notification-button";

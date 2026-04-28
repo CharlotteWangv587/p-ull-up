@@ -3,48 +3,48 @@
 import { useState } from "react";
 import styles from "./comment.module.css";
 
-// ─── Types (shaped for Supabase wiring) ──────────────────────────────────────
+// ─── Types ───────────────────────────────────────────────────────────────────
 
 export type CommentAuthor = {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string | null;
   avatarUrl?: string | null;
-  school?: string; // e.g. "Pomona", "CMC", "Scripps", "Mudd", "Pitzer"
+  school?: string | null;
 };
 
 export type CommentData = {
   id: string;
-  author: CommentAuthor | null; // null = posted anonymously
+  author?: CommentAuthor | null;
   body: string;
-  createdAt: string; // ISO string or relative label from backend
+  createdAt?: string | null;
+  created_at?: string | null;
   replies?: CommentData[];
 };
 
-// ─── Props ────────────────────────────────────────────────────────────────────
+// ─── Props ───────────────────────────────────────────────────────────────────
 
 type CommentProps = {
   comment: CommentData;
-  depth?: number; // 0 = top-level, 1 = reply (we only go 1 level deep)
+  depth?: number;
   onReply?: (parentId: string, body: string, anonymous: boolean) => void;
   onDm?: (author: CommentAuthor) => void;
   onDelete?: (commentId: string) => void;
-  /** The currently logged-in user's ID (undefined = not signed in) */
   currentUserId?: string;
-  /** The user ID of whoever created the event this comment belongs to */
   eventCreatorId?: string;
-  /** True when the current user is a backend admin */
   isAdmin?: boolean;
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function AvatarPlaceholder({ name, size = 34 }: { name: string; size?: number }) {
-  const initials = name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
+  const initials =
+    name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "?";
+
   return (
     <span
       className={styles.avatarPlaceholder}
@@ -92,7 +92,11 @@ function TrashIcon() {
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+function formatCommentTime(comment: CommentData): string {
+  return comment.createdAt ?? comment.created_at ?? "";
+}
+
+// ─── Main component ──────────────────────────────────────────────────────────
 
 export default function Comment({
   comment,
@@ -109,24 +113,25 @@ export default function Comment({
   const [anonymous, setAnonymous] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const isAnon = comment.author === null;
-  const displayName = isAnon ? "Anonymous" : comment.author!.name;
-  const school = !isAnon && comment.author!.school ? comment.author!.school : null;
+  const author = comment.author ?? null;
+  const isAnon = !author;
 
-  // Who can delete this comment?
-  //  • The comment's own author
-  //  • The event creator (moderating their event)
-  //  • A backend admin
+  const displayName = author?.name?.trim() || "Anonymous";
+  const school = author?.school?.trim() || null;
+  const createdAt = formatCommentTime(comment);
+
   const canDelete =
     !!onDelete &&
     !!currentUserId &&
     (isAdmin ||
       currentUserId === eventCreatorId ||
-      (!isAnon && comment.author!.id === currentUserId));
+      (!!author?.id && author.id === currentUserId));
 
   function handleSendReply() {
     const body = replyText.trim();
+
     if (!body || !onReply) return;
+
     onReply(comment.id, body, anonymous);
     setReplyText("");
     setShowReplyBox(false);
@@ -134,25 +139,27 @@ export default function Comment({
   }
 
   function handleDeleteClick() {
+    if (!onDelete) return;
+
     if (!confirmDelete) {
       setConfirmDelete(true);
       return;
     }
-    onDelete!(comment.id);
+
+    onDelete(comment.id);
     setConfirmDelete(false);
   }
 
   return (
     <div className={`${styles.root} ${depth > 0 ? styles.reply : ""}`}>
-      {/* ── Header ── */}
       <div className={styles.header}>
         <div className={styles.avatarWrap}>
           {isAnon ? (
             <AnonAvatar />
-          ) : comment.author!.avatarUrl ? (
+          ) : author?.avatarUrl ? (
             <img
               className={styles.avatar}
-              src={comment.author!.avatarUrl}
+              src={author.avatarUrl}
               alt={displayName}
               width={34}
               height={34}
@@ -167,15 +174,15 @@ export default function Comment({
             {displayName}
             {school ? <span className={styles.school}> · {school}</span> : null}
           </span>
-          <span className={styles.time}>{comment.createdAt}</span>
+
+          {createdAt ? <span className={styles.time}>{createdAt}</span> : null}
         </div>
 
-        {/* DM button — only shown for non-anonymous authors */}
-        {!isAnon && onDm ? (
+        {!isAnon && author && onDm ? (
           <button
             type="button"
             className={styles.dmBtn}
-            onClick={() => onDm(comment.author!)}
+            onClick={() => onDm(author)}
             aria-label={`Send ${displayName} a message`}
           >
             <PaperPlaneIcon />
@@ -183,16 +190,14 @@ export default function Comment({
         ) : null}
       </div>
 
-      {/* ── Body ── */}
       <p className={styles.body}>{comment.body}</p>
 
-      {/* ── Actions ── */}
       <div className={styles.actions}>
         {depth === 0 && onReply ? (
           <button
             type="button"
             className={styles.actionBtn}
-            onClick={() => setShowReplyBox((v) => !v)}
+            onClick={() => setShowReplyBox((value) => !value)}
           >
             {showReplyBox ? "Cancel" : "Reply"}
           </button>
@@ -231,25 +236,26 @@ export default function Comment({
         ) : null}
       </div>
 
-      {/* ── Inline reply box ── */}
       {showReplyBox ? (
         <div className={styles.replyBox}>
           <textarea
             className={styles.replyInput}
             placeholder="Write a reply…"
             value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
+            onChange={(event) => setReplyText(event.target.value)}
             rows={2}
           />
+
           <div className={styles.replyFooter}>
             <label className={styles.anonToggle}>
               <input
                 type="checkbox"
                 checked={anonymous}
-                onChange={(e) => setAnonymous(e.target.checked)}
+                onChange={(event) => setAnonymous(event.target.checked)}
               />
               Post anonymously
             </label>
+
             <button
               type="button"
               className={styles.sendBtn}
@@ -262,13 +268,12 @@ export default function Comment({
         </div>
       ) : null}
 
-      {/* ── Nested replies (one level deep) ── */}
       {comment.replies?.length ? (
         <div className={styles.repliesWrap}>
-          {comment.replies.map((r) => (
+          {comment.replies.map((reply) => (
             <Comment
-              key={r.id}
-              comment={r}
+              key={reply.id}
+              comment={reply}
               depth={1}
               onDm={onDm}
               onDelete={onDelete}

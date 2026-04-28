@@ -1,92 +1,187 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireUser, UnauthorizedError } from "@/lib/auth";
-import { supabaseAuthed, supabaseService } from "@/lib/supabase";
+import { supabasePublic, supabaseService } from "@/lib/supabase";
 
-// GET /api/events/[id]/comments
-// Public — uses service role to join profiles so display names are visible.
+// ─── GET /api/events/:id/comments ───────────────────────────────────────────
+// Publicly lists comments for one event.
+
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id: eventId } = await params;
-
-  const { data, error } = await supabaseService()
-    .from("comments")
-    .select("id, body, created_at, user_id, profiles(display_name)")
-    .eq("event_id", eventId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+  {
+    params,
+  }: {
+    params: Promise<{ id: string }>;
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const comments = (data ?? []).map((c: any) => ({
-    id: c.id as string,
-    author: {
-      id: c.user_id as string,
-      name: (c.profiles?.display_name as string | null) ?? "User",
-    },
-    body: c.body as string,
-    createdAt: new Date(c.created_at as string).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-    replies: [],
-  }));
-
-  return NextResponse.json({ ok: true, comments });
-}
-
-// POST /api/events/[id]/comments
-// Requires auth. Inserts a comment and returns it.
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = await requireUser(request);
-    const tok = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
     const { id: eventId } = await params;
 
-    const { body } = await request.json();
-    if (!body?.trim()) {
-      return NextResponse.json({ ok: false, error: "body is required" }, { status: 400 });
+    if (!eventId) {
+      return NextResponse.json(
+        { ok: false, error: "event id is required" },
+        { status: 400 }
+      );
     }
 
-    const { data, error } = await supabaseAuthed(tok)
+    const { data, error } = await supabasePublic
       .from("comments")
-      .insert({ event_id: eventId, user_id: userId, body: body.trim() })
-      .select("id, body, created_at")
-      .single();
+      .select("id, event_id, user_id, body, created_at")
+      .eq("event_id", eventId)
+      .order("created_at", { ascending: true });
 
     if (error) {
-      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
-    }
+      console.error("[GET /api/events/:id/comments]", error);
 
-    const { data: profile } = await supabaseService()
-      .from("profiles")
-      .select("display_name")
-      .eq("id", userId)
-      .single();
+      return NextResponse.json(
+        { ok: false, error: error.message },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       ok: true,
-      comment: {
-        id: data.id,
-        author: { id: userId, name: profile?.display_name ?? "You" },
-        body: data.body,
-        createdAt: "Just now",
-        replies: [],
-      },
+      comments: data ?? [],
     });
-  } catch (err) {
-    if (err instanceof UnauthorizedError) {
-      return NextResponse.json({ ok: false, error: err.message }, { status: 401 });
+  } catch (error) {
+    console.error("[GET /api/events/:id/comments] unexpected", error);
+
+    return NextResponse.json(
+      { ok: false, error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+// ─── POST /api/events/:id/comments ──────────────────────────────────────────
+// Creates a comment for one event. Requires auth.
+
+export async function POST(
+  request: NextRequest,
+  {
+    params,
+  }: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  try {
+    const userId = await requireUser(request);
+    const { id: eventId } = await params;
+
+    if (!eventId) {
+      return NextResponse.json(
+        { ok: false, error: "event id is required" },
+        { status: 400 }
+      );
     }
-    console.error("[POST /api/events/:id/comments]", err);
-    return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });
+
+    let bodyJson: { body?: unknown };
+
+    try {
+      bodyJson = await request.json();
+    } catch {
+      return NextResponse.json(
+        { ok: false, error: "Invalid JSON body" },
+        { status: 400 }
+      );
+    }
+
+    const commentBody =
+      typeof bodyJson.body === "string" ? bodyJson.body.trim() : "";
+
+    if (!commentBody) {
+      return NextResponse.json(
+        { ok: false, error: "Comment body is required" },
+        { status: 400 }
+      );
+    }
+
+    const service = supabaseService();
+
+    // 1. Confirm the parent event exists.
+    const { data: event, error: eventError } = await service
+      .from("events")
+      .select("id")
+      .eq("id", eventId)
+      .maybeSingle();
+
+    if (eventError) {
+      console.error("[POST /api/events/:id/comments] event lookup", eventError);
+
+      return NextResponse.json(
+        { ok: false, error: eventError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!event) {
+      return NextResponse.json(
+        { ok: false, error: "Event not found" },
+        { status: 404 }
+      );
+    }
+
+    // 2. Ensure the user has a matching profile row.
+    // Your comments table references public.profiles(id), not auth.users(id).
+    const { error: profileError } = await service
+      .from("profiles")
+      .upsert(
+        {
+          id: userId,
+        },
+        {
+          onConflict: "id",
+        }
+      );
+
+    if (profileError) {
+      console.error("[POST /api/events/:id/comments] profile upsert", profileError);
+
+      return NextResponse.json(
+        { ok: false, error: profileError.message },
+        { status: 500 }
+      );
+    }
+
+    // 3. Insert the comment.
+    const { data: comment, error: insertError } = await service
+      .from("comments")
+      .insert({
+        event_id: eventId,
+        user_id: userId,
+        body: commentBody,
+      })
+      .select("id, event_id, user_id, body, created_at")
+      .single();
+
+    if (insertError) {
+      console.error("[POST /api/events/:id/comments] insert", insertError);
+
+      return NextResponse.json(
+        { ok: false, error: insertError.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        ok: true,
+        comment,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return NextResponse.json(
+        { ok: false, error: error.message },
+        { status: 401 }
+      );
+    }
+
+    console.error("[POST /api/events/:id/comments] unexpected", error);
+
+    return NextResponse.json(
+      { ok: false, error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }
