@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './eventposting.module.css';
 import Navbar from '@/components/Navbar/navbar';
@@ -34,6 +34,22 @@ export default function EventPosting() {
   const [keywords, setKeywords]             = useState<string[]>([]);
   // Multi-select campus affiliations (PDF spec: campus_affiliation text[])
   const [campusAffiliations, setCampusAffiliations] = useState<string[]>([]);
+
+  // ── Poster state ──────────────────────────────────────────────────────────
+  const [posterPreview, setPosterPreview] = useState<string | null>(null);
+  const posterInputRef = useRef<HTMLInputElement>(null);
+
+  function onPickPoster(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (posterPreview) URL.revokeObjectURL(posterPreview);
+    setPosterPreview(URL.createObjectURL(file));
+  }
+
+  useEffect(() => {
+    return () => { if (posterPreview) URL.revokeObjectURL(posterPreview); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Submit state ──────────────────────────────────────────────────────────
   const [submitting, setSubmitting] = useState(false);
@@ -312,10 +328,22 @@ export default function EventPosting() {
             <div className={styles.field}>
               <label className={styles.label}>Photo / Poster</label>
               <div className={styles.photoSection}>
+                {posterPreview && (
+                  <div className={styles.posterPreviewFrame}>
+                    <img src={posterPreview} alt="Poster preview" className={styles.posterPreviewImg} />
+                  </div>
+                )}
                 <div className={styles.photoButtons}>
-                  <button type="button" className={styles.photoBtn}>Pick</button>
+                  <button type="button" className={styles.photoBtn} onClick={() => posterInputRef.current?.click()}>Pick</button>
                   <button type="button" className={styles.photoBtn}>Generate</button>
                 </div>
+                <input
+                  ref={posterInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={onPickPoster}
+                />
               </div>
             </div>
 
@@ -390,6 +418,7 @@ export default function EventPosting() {
             tags={previewTags}
             dateText={dateText}
             timeText={timeText}
+            imageUrl={posterPreview}
             ctaLabel="View Event"
             onCtaClick={() => {}}
           />
