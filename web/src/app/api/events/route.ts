@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabasePublic, supabaseService } from "@/lib/supabase";
 import { requireUser, UnauthorizedError } from "@/lib/auth";
 
+export const runtime = "nodejs";
+
+const EVENT_POSTER_BUCKET = "event-posters";
+const MAX_POSTER_SIZE_BYTES = 5 * 1024 * 1024;
+
+const ALLOWED_POSTER_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+]);
+
 // ── GET /api/events ────────────────────────────────────────────────────────────
 // Query params:
 //   q            - text search (category=event mode)
@@ -23,8 +35,8 @@ export async function GET(request: NextRequest) {
   let query = (supabasePublic as any)
     .from("events")
     .select(
-      "id, title, description, start_time, end_time, is_time_tbd, location_name, campus_affiliation, keywords, event_saves(count), event_joins(count)"
-    )
+  "id, title, description, start_time, end_time, is_time_tbd, location_name, campus_affiliation, keywords, photo_url, photo_path, event_saves(count), event_joins(count)"
+)
     .order("start_time", { ascending: true, nullsFirst: false })
     .limit(100);
 
@@ -104,6 +116,8 @@ export async function GET(request: NextRequest) {
     start_time: (e.start_time as string | null) ?? null,
     end_time: (e.end_time as string | null) ?? null,
     is_time_tbd: (e.is_time_tbd as boolean) ?? false,
+    photo_url: (e.photo_url as string | null) ?? null,
+    photo_path: (e.photo_path as string | null) ?? null,
     interested_count: (e.event_saves?.[0]?.count as number) ?? 0,
     going_count: (e.event_joins?.[0]?.count as number) ?? 0,
   }));
@@ -156,7 +170,24 @@ function toStringArray(value: unknown): string[] {
   }
 
   if (typeof value === "string") {
-    return value
+    const trimmed = value.trim();
+
+    if (!trimmed) return [];
+
+    try {
+      const parsed = JSON.parse(trimmed);
+
+      if (Array.isArray(parsed)) {
+        return parsed
+          .filter((item): item is string => typeof item === "string")
+          .map((item) => item.trim())
+          .filter(Boolean);
+      }
+    } catch {
+      // Fall back to comma-separated parsing below.
+    }
+
+    return trimmed
       .split(",")
       .map((item) => item.trim())
       .filter(Boolean);
@@ -175,45 +206,101 @@ function toPositiveIntegerOrNull(value: unknown): number | null {
   return n;
 }
 
+function toBoolean(value: unknown): boolean {
+  return value === true || value === "true";
+}
+
+function formValue(formData: FormData, key: string): unknown {
+  return formData.get(key);
+}
+
+function getPosterExtension(contentType: string): string {
+  if (contentType === "image/jpeg") return "jpg";
+  if (contentType === "image/png") return "png";
+  if (contentType === "image/webp") return "webp";
+  if (contentType === "image/gif") return "gif";
+
+  return "bin";
+}
+
+async function uploadEventPoster(
+  posterFile: File,
+  userId: string
+): Promise<{ photoUrl: string; photoPath: string }> {
+  if (!ALLOWED_POSTER_TYPES.has(posterFile.type)) {
+    throw new Error("Poster must be a JPG, PNG, WEBP, or GIF file");
+  }
+
+  if (posterFile.size > MAX_POSTER_SIZE_BYTES) {
+    throw new Error("Poster must be smaller than 5MB");
+  }
+
+  const extension = getPosterExtension(posterFile.type);
+  const photoPath = `${userId}/${crypto.randomUUID()}.${extension}`;
+
+  const { error } = await supabaseService()
+    .storage
+    .from(EVENT_POSTER_BUCKET)
+    .upload(photoPath, posterFile, {
+      contentType: posterFile.type,
+      upsert: false,
+    });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabaseService()
+    .storage
+    .from(EVENT_POSTER_BUCKET)
+    .getPublicUrl(photoPath);
+
+  return {
+    photoUrl: publicUrl,
+    photoPath,
+  };
+}
+
 // ── POST /api/events ──────────────────────────────────────────────────────────
 // Creates a new event. Requires auth (Bearer token).
 export async function POST(request: NextRequest) {
   try {
     const userId = await requireUser(request);
 
-    let body: Record<string, unknown>;
+    let formData: FormData;
 
     try {
-      body = await request.json();
+      formData = await request.formData();
     } catch {
       return NextResponse.json(
-        { ok: false, error: "Invalid JSON body" },
+        { ok: false, error: "Invalid form data body" },
         { status: 400 }
       );
     }
 
-    const {
-      title,
-      description,
-      location_name,
-      start_time,
-      end_time,
-      is_time_tbd,
-      lat,
-      lng,
-      meetup_location_name,
-      meetup_lat,
-      meetup_lng,
-      campus_affiliation,
-      keywords,
-      photo_url,
-      cost_text,
-      spots,
-      allow_waitlist,
-    } = body;
+    const title = formValue(formData, "title");
+    const description = formValue(formData, "description");
+    const location_name = formValue(formData, "location_name");
+    const start_time = formValue(formData, "start_time");
+    const end_time = formValue(formData, "end_time");
+    const is_time_tbd = formValue(formData, "is_time_tbd");
+    const lat = formValue(formData, "lat");
+    const lng = formValue(formData, "lng");
+    const meetup_location_name = formValue(formData, "meetup_location_name");
+    const meetup_lat = formValue(formData, "meetup_lat");
+    const meetup_lng = formValue(formData, "meetup_lng");
+    const campus_affiliation = formValue(formData, "campus_affiliation");
+    const keywords = formValue(formData, "keywords");
+    const cost_text = formValue(formData, "cost_text");
+    const spots = formValue(formData, "spots");
+    const allow_waitlist = formValue(formData, "allow_waitlist");
+    const poster = formData.get("poster");
 
     // ── Normalize basic fields ──────────────────────────────────────────────
     const titleText = typeof title === "string" ? title.trim() : "";
+
     const descriptionText =
       typeof description === "string" && description.trim()
         ? description.trim()
@@ -232,7 +319,7 @@ export async function POST(request: NextRequest) {
         ? end_time.trim()
         : null;
 
-    const timeTbd = is_time_tbd === true;
+    const timeTbd = toBoolean(is_time_tbd);
 
     const meetupLocationNameText =
       typeof meetup_location_name === "string" && meetup_location_name.trim()
@@ -284,6 +371,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // ── Upload poster if provided ───────────────────────────────────────────
+    let photoUrl: string | null = null;
+    let photoPath: string | null = null;
+
+    if (poster instanceof File && poster.size > 0) {
+      try {
+        const uploadedPoster = await uploadEventPoster(poster, userId);
+
+        photoUrl = uploadedPoster.photoUrl;
+        photoPath = uploadedPoster.photoPath;
+      } catch (error) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error:
+              error instanceof Error
+                ? error.message
+                : "Failed to upload event poster",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     // ── Dedupe key ──────────────────────────────────────────────────────────
     const dedupeKey = computeDedupeKey(
       titleText,
@@ -314,26 +425,32 @@ export async function POST(request: NextRequest) {
         campus_affiliation: campusAffiliationArray,
         keywords: keywordsArray,
 
-        photo_url: typeof photo_url === "string" && photo_url.trim()
-          ? photo_url.trim()
-          : null,
+        photo_url: photoUrl,
+        photo_path: photoPath,
 
-        cost_text: typeof cost_text === "string" && cost_text.trim()
-          ? cost_text.trim()
-          : null,
+        cost_text:
+          typeof cost_text === "string" && cost_text.trim()
+            ? cost_text.trim()
+            : null,
 
         spots: spotsValue,
-        allow_waitlist: allow_waitlist === true,
+        allow_waitlist: toBoolean(allow_waitlist),
 
         source: "user",
         external_id: null,
         dedupe_key: dedupeKey,
         created_by: userId,
       })
-      .select("id")
+      .select("id, photo_url, photo_path")
       .single();
 
     if (error) {
+      if (photoPath) {
+        await supabaseService()
+          .storage
+          .from(EVENT_POSTER_BUCKET)
+          .remove([photoPath]);
+      }
       if (error.code === "23505") {
         return NextResponse.json(
           { ok: false, error: "An identical event already exists (duplicate)" },
@@ -349,7 +466,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ ok: true, id: data.id }, { status: 201 });
+    return NextResponse.json(
+      {
+        ok: true,
+        id: data.id,
+        photo_url: data.photo_url,
+        photo_path: data.photo_path,
+      },
+      { status: 201 }
+    );
+
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       return NextResponse.json(
