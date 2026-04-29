@@ -17,108 +17,6 @@ import { useAuth } from '@/context/auth';
 const ALLOWED_POSTER_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_POSTER_SIZE_BYTES = 5 * 1024 * 1024;
 
-// Keep uploaded posters and all previews in the same stable EventCard-friendly shape.
-const POSTER_CROP_WIDTH = 1200;
-const POSTER_CROP_HEIGHT = 675;
-const CROPPED_POSTER_MIME_TYPE = 'image/jpeg';
-const CROPPED_POSTER_QUALITY = 0.9;
-
-function loadImageFromFile(file: File): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const objectUrl = URL.createObjectURL(file);
-    const image = new Image();
-
-    image.onload = () => {
-      URL.revokeObjectURL(objectUrl);
-      resolve(image);
-    };
-
-    image.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      reject(new Error('Could not read this image file.'));
-    };
-
-    image.src = objectUrl;
-  });
-}
-
-function canvasToBlob(
-  canvas: HTMLCanvasElement,
-  type: string,
-  quality: number
-): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          reject(new Error('Could not crop this poster.'));
-          return;
-        }
-
-        resolve(blob);
-      },
-      type,
-      quality
-    );
-  });
-}
-
-function getCroppedPosterName(originalName: string): string {
-  const baseName = originalName.replace(/\.[^/.]+$/, '').trim() || 'event-poster';
-  return `${baseName}-cropped.jpg`;
-}
-
-async function cropPosterToEventRatio(file: File): Promise<File> {
-  const image = await loadImageFromFile(file);
-  const targetRatio = POSTER_CROP_WIDTH / POSTER_CROP_HEIGHT;
-  const sourceRatio = image.naturalWidth / image.naturalHeight;
-
-  let sourceX = 0;
-  let sourceY = 0;
-  let sourceWidth = image.naturalWidth;
-  let sourceHeight = image.naturalHeight;
-
-  if (sourceRatio > targetRatio) {
-    sourceWidth = image.naturalHeight * targetRatio;
-    sourceX = (image.naturalWidth - sourceWidth) / 2;
-  } else if (sourceRatio < targetRatio) {
-    sourceHeight = image.naturalWidth / targetRatio;
-    sourceY = (image.naturalHeight - sourceHeight) / 2;
-  }
-
-  const canvas = document.createElement('canvas');
-  canvas.width = POSTER_CROP_WIDTH;
-  canvas.height = POSTER_CROP_HEIGHT;
-
-  const context = canvas.getContext('2d');
-
-  if (!context) {
-    throw new Error('Your browser could not process this poster.');
-  }
-
-  context.drawImage(
-    image,
-    sourceX,
-    sourceY,
-    sourceWidth,
-    sourceHeight,
-    0,
-    0,
-    POSTER_CROP_WIDTH,
-    POSTER_CROP_HEIGHT
-  );
-
-  const blob = await canvasToBlob(
-    canvas,
-    CROPPED_POSTER_MIME_TYPE,
-    CROPPED_POSTER_QUALITY
-  );
-
-  return new File([blob], getCroppedPosterName(file.name), {
-    type: CROPPED_POSTER_MIME_TYPE,
-    lastModified: Date.now(),
-  });
-}
 
 export default function EventPosting() {
   // ── Form state ────────────────────────────────────────────────────────────
@@ -214,7 +112,7 @@ export default function EventPosting() {
     posterInputRef.current?.click();
   }
 
-  async function handlePosterPick(e: React.ChangeEvent<HTMLInputElement>) {
+  function handlePosterPick(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
 
     if (!file) return;
@@ -231,25 +129,15 @@ export default function EventPosting() {
       return;
     }
 
-    try {
-      const croppedPoster = await cropPosterToEventRatio(file);
-      const nextPreviewUrl = URL.createObjectURL(croppedPoster);
+    const nextPreviewUrl = URL.createObjectURL(file);
 
-      if (posterPreviewUrl) {
-        URL.revokeObjectURL(posterPreviewUrl);
-      }
-
-      setPosterFile(croppedPoster);
-      setPosterPreviewUrl(nextPreviewUrl);
-      setError(null);
-    } catch (cropError) {
-      setError(
-        cropError instanceof Error
-          ? cropError.message
-          : 'Could not crop this poster. Please try another image.'
-      );
-      e.target.value = '';
+    if (posterPreviewUrl) {
+      URL.revokeObjectURL(posterPreviewUrl);
     }
+
+    setPosterFile(file);
+    setPosterPreviewUrl(nextPreviewUrl);
+    setError(null);
   }
 
   function removePoster() {
@@ -554,7 +442,7 @@ export default function EventPosting() {
                     style={{ display: 'none' }}
                   />
 
-                 {posterPreviewUrl ? (
+                  {posterPreviewUrl ? (
                     <div className={styles.posterPreviewWrap}>
                       <div className={styles.posterPreviewFrame}>
                         <img
